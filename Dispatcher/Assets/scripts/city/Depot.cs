@@ -23,7 +23,7 @@ public class Depot : Structure {
 	void Start()
 	{
 		theCity = GameObject.Find ("City").GetComponent<City>();
-		GenerateOfficer();
+		GenerateOfficer(2);
 		InputManager.Instance.OnClick += OnClick;
 	}
 
@@ -41,7 +41,7 @@ public class Depot : Structure {
 			if (m_cash >= cost_officer)
 			{
 				m_cash -= cost_officer;
-				GenerateOfficer();
+				GenerateOfficer(0);
 			}
 		}
 	}
@@ -92,13 +92,13 @@ public class Depot : Structure {
 		SendOfficer (_officer, _crime);
 	}
 
-	void GenerateOfficer()
+	void GenerateOfficer(int _level)
 	{
 		// create a new officer when earned
 		GameObject o = Instantiate(officerPrefab) as GameObject;
 		o.transform.SetParent(gameObject.transform);
 		Officer o_comp = o.GetComponent<Officer>();
-		o_comp.Initialize(officerIndex);
+		o_comp.Initialize(officerIndex, _level);
 		officers.Add(o_comp);
 		officerIndex++;
 	}
@@ -114,6 +114,24 @@ public class Depot : Structure {
 		foreach (Officer officer in officers)
 		{
 			if (officer.GetIsAtDepot())
+			{
+				retVal.Add(officer);
+			}
+		}
+		return retVal;
+	}
+
+	public List<Officer> GetAllOfficers()
+	{
+		return officers;
+	}
+
+	public List<Officer> GetAllAvailableOfficers()
+	{
+		List<Officer> retVal = new List<Officer>();
+		foreach (Officer officer in officers)
+		{
+			if (officer.GetIsAvailableForAssignment())
 			{
 				retVal.Add(officer);
 			}

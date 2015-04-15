@@ -71,13 +71,13 @@ public class CrimeRing : MonoBehaviour {
 		// create a crime
 		int chooseCrime = Random.Range(0, 3);
 		int chooseTime = Random.Range(1, 6);
-		int chooseDuration = Random.Range(10, 20);
+		int chooseDuration = Random.Range(10, 30);
 
-		Crime.CrimeType thisCrimeType = Crime.CrimeType.Robbery;
+		types.CrimeType thisCrimeType = types.CrimeType.Robbery;
 		if (chooseCrime == 1)
-			thisCrimeType = Crime.CrimeType.Vandalism;
+			thisCrimeType = types.CrimeType.Vandalism;
 		else if (chooseCrime == 2)
-			thisCrimeType = Crime.CrimeType.Violence;
+			thisCrimeType = types.CrimeType.Violence;
 
 		GameObject crime_go = new GameObject("crime " + crimeIndex);
 		crime_go.transform.SetParent(gameObject.transform);

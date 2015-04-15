@@ -3,29 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class Officer : MonoBehaviour {
-
-	private int officerLevel;
+	
 	public int officerIndex;
 	private List<Crime> crimesSolved = new List<Crime>();
 	private Crime currentCrime;
 	private Depot theDepot;
+	public List<GameObject> headImages = new List<GameObject>();
 
-	public enum OfficerState
-	{
-		isAtDepot,
-		isTravelling_interruptible,
-		isTravelling_uninterruptible,
-		isAtCrime,
-	}
-	private OfficerState m_officerState;
-	public enum DestinationType
-	{
-		Depot,
-		Crime,
-		Tip,
-		Raid
-	}
-	private DestinationType m_destinationType;
+	private types.OfficerState m_officerState;
+
+	private types.DestinationType m_destinationType;
 
 	private Structure destination;
 	private float progressAlongTrip;
@@ -33,26 +20,35 @@ public class Officer : MonoBehaviour {
 	private Vector3 tripEnd;
 
 	// officer attributes
+	public float m_xp = 0.0f;
+	private Dictionary<Neighborhood, float> m_xpFromNeighborhoods = new Dictionary<Neighborhood, float>();
+	private Dictionary<types.CrimeType, float> m_xpFromCrimeTypes = new Dictionary<types.CrimeType, float>();
+	private int m_level = 0;
 	private float m_crimeResolvingSpeed = 5.0f;
 	private float m_speed = 0.4f;
-	private int m_level = 0;
+
+	public void Initialize(int _index, int _level)
+	{
+		officerIndex = _index;
+		m_level = _level;
+	}
 
 	void Start()
 	{
-		InputManager.Instance.OnClick += OnClick;
+		//InputManager.Instance.OnClick += OnClick;
 		theDepot = GameObject.Find ("Depot").GetComponent<Depot>();
-		m_destinationType = DestinationType.Depot;
+		m_destinationType = types.DestinationType.Depot;
 	}
 
 	void Update()
 	{
-		if (m_officerState == OfficerState.isAtDepot)
+		if (m_officerState == types.OfficerState.isAtDepot)
 		{
 			// do nothing
 		}
-		else if (m_officerState == OfficerState.isTravelling_interruptible)
+		else if (m_officerState == types.OfficerState.isTravelling_interruptible)
 		{
-			if (m_destinationType == DestinationType.Crime)
+			if (m_destinationType == types.DestinationType.Crime)
 			{
 				if (!GetCurrentCrimeIsActive())
 				{
@@ -63,7 +59,7 @@ public class Officer : MonoBehaviour {
 					ArriveAtCrime();
 				}
 			}
-			else if (m_destinationType == DestinationType.Depot)
+			else if (m_destinationType == types.DestinationType.Depot)
 			{
 				if (MoveTowardDestination())
 				{
@@ -71,14 +67,14 @@ public class Officer : MonoBehaviour {
 				}
 			}
 		}
-		else if (m_officerState == OfficerState.isTravelling_uninterruptible)
+		else if (m_officerState == types.OfficerState.isTravelling_uninterruptible)
 		{
 			if (MoveTowardDestination())
 			{
 				EnterDepot();
 			}
 		}
-		else if (m_officerState == OfficerState.isAtCrime)
+		else if (m_officerState == types.OfficerState.isAtCrime)
 		{
 			if (GetCurrentCrimeIsActive())
 			{
@@ -91,15 +87,23 @@ public class Officer : MonoBehaviour {
 		}
 	}
 
+	public GameObject GetMyHead()
+	{
+		return headImages[0];
+	}
+
 	public void AssignCrime(Crime _crime)
 	{
 		currentCrime = _crime;
 		PathFind (_crime.GetBuilding());
-		m_destinationType = DestinationType.Crime;
-		if (m_officerState == OfficerState.isAtDepot)
+		m_destinationType = types.DestinationType.Crime;
+
+		if (m_officerState == types.OfficerState.isAtDepot)
 		{
 			LeaveDepot(true);
 		}
+		else
+			m_officerState = types.OfficerState.isTravelling_interruptible;
 	}
 	
 	void PathFind(Structure _destination)
@@ -112,7 +116,7 @@ public class Officer : MonoBehaviour {
 	
 	void LeaveDepot(bool _isHeadingToCrime)
 	{
-		m_officerState = OfficerState.isTravelling_interruptible;
+		m_officerState = types.OfficerState.isTravelling_interruptible;
 		if (_isHeadingToCrime)
 		{
 			PathFind(currentCrime.GetBuilding());
@@ -135,23 +139,25 @@ public class Officer : MonoBehaviour {
 	{
 		currentCrime = null;
 		PathFind ((Structure)theDepot);
-		m_destinationType = DestinationType.Depot;
+		m_destinationType = types.DestinationType.Depot;
 	}
 	
 	void EnterDepot()
 	{
-		m_officerState = OfficerState.isAtDepot;
+		m_officerState = types.OfficerState.isAtDepot;
 	}
 	
 	void LeaveCompletedCrimeScene()
 	{
-		m_officerState = OfficerState.isTravelling_uninterruptible;
+		m_officerState = types.OfficerState.isTravelling_uninterruptible;
 		PathFind ((Structure)theDepot);
 	}
 
 	void WorkCrime()
 	{
 		GetCurrentCrime().UpdateDuration(-Clock.GetDeltaTime() * m_crimeResolvingSpeed);
+		GainExperience(Clock.GetDeltaTime());
+
 		// if the crime is resolved
 		if (GetCurrentCrime().CheckIfDurationEmptied())
 		{
@@ -172,28 +178,42 @@ public class Officer : MonoBehaviour {
 	
 	void ArriveAtCrime()
 	{
-		m_officerState = OfficerState.isAtCrime;
+		m_officerState = types.OfficerState.isAtCrime;
 	}
 
-	public void Initialize(int _index)
+	public void OnHeadClick ()
 	{
-		officerIndex = _index;
-	}
-
-	void OnClick (GameObject go)
-	{
-		if (go == gameObject)
+		if (GetIsAvailableForAssignment())
 		{
-			if (GetIsAvailableForAssignment())
-			{
-				GameObject.Find ("GameManager").GetComponent<GameManager>().GetGameEvents(this);
-			}
+			GameObject.Find ("GameManager").GetComponent<GameManager>().GetGameEvents(this);
+			GameObject.Find ("FloatingUIManager").GetComponent<FloatingUI>().ClearCurrentHeads();
 		}
 	}
 
-	void GainExperience(int _experience)
+	void GainExperience(float _experience)
 	{
+		// add experience points
+		m_xp += Clock.GetDeltaTime();
+		// add experience points toward neighborhood
+		if (m_xpFromNeighborhoods.ContainsKey(GetCurrentCrime().GetNeighborhood()))
+		{
+			m_xpFromNeighborhoods[GetCurrentCrime().GetNeighborhood()] += Clock.GetDeltaTime();
+		}
+		else
+		{
+			m_xpFromNeighborhoods.Add(GetCurrentCrime().GetNeighborhood(), Clock.GetDeltaTime());
+		}
+		// add experience points toward crime type
+		if (m_xpFromCrimeTypes.ContainsKey(GetCurrentCrime().GetCrimeType()))
+		{
+			m_xpFromCrimeTypes[GetCurrentCrime().GetCrimeType()] += Clock.GetDeltaTime();
+		}
+		else
+		{
+			m_xpFromCrimeTypes.Add(GetCurrentCrime().GetCrimeType(), Clock.GetDeltaTime());
+		}
 
+		// TODO: check if level up
 	}
 
 	void LevelUp()
@@ -203,7 +223,7 @@ public class Officer : MonoBehaviour {
 
 	public bool GetIsAtCrime()
 	{
-		return (m_officerState == OfficerState.isAtCrime);
+		return (m_officerState == types.OfficerState.isAtCrime);
 	}
 
 	public Crime GetCurrentCrime()
@@ -222,12 +242,12 @@ public class Officer : MonoBehaviour {
 
 	public bool GetIsAtDepot()
 	{
-		return (m_officerState == OfficerState.isAtDepot);
+		return (m_officerState == types.OfficerState.isAtDepot);
 	}
 
 	bool GetCanBeRerouted()
 	{
-		return (m_officerState != OfficerState.isTravelling_uninterruptible);
+		return (m_officerState != types.OfficerState.isTravelling_uninterruptible);
 	}
 
 	public bool GetIsAvailableForAssignment()

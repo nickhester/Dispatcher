@@ -1,39 +1,62 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.Collections.Generic;
 
 public class FloatingUI : MonoBehaviour {
 
 	public GameObject pin;
-	public GameObject canvas;
-	private float PinHeight = 40.0f;
+	private float PinHeight = 1.0f;
+	private float headHeight = 200.0f;
+	private float headSpacingHorizontal = 200.0f;
+	public List<GameObject> currentHeads = new List<GameObject>();
 
 	public GameObject SpawnPin(Vector3 _loc)
 	{
 		GameObject instance = Instantiate(pin) as GameObject;
-		instance.transform.SetParent(canvas.transform, false);
-		Vector3 screenSpacePoint = Camera.main.WorldToScreenPoint(_loc);
-		Vector2 pointConverted = worldPointToCanvas(screenSpacePoint);
-		instance.GetComponent<RectTransform>().localPosition = pointConverted;
+		_loc += instance.transform.up * PinHeight;
+		instance.transform.position = _loc;
 		return instance;
 	}
-
-	Vector2 worldPointToCanvas(Vector3 _v)
+	
+	public List<GameObject> SpawnHeads(Vector3 _loc, List<Officer> _officers)
 	{
-		return new Vector2(_v.x - (Screen.width/2), _v.y - (Screen.height/2) + PinHeight);
+		ClearCurrentHeads();
+		List<GameObject> retVal = new List<GameObject>();
+		for (int i = 0; i < _officers.Count; i++)
+		{
+			Vector3 loc = _loc;
+			GameObject instance = Instantiate(_officers[i].GetMyHead()) as GameObject;
+			loc += instance.transform.up * headHeight;
+			// determine spacing
+			float spacing = (headSpacingHorizontal * i) - ((headSpacingHorizontal * ((float)_officers.Count - 1)) / 2.0f);
+			loc += instance.transform.right * spacing;
+			instance.transform.position = loc;
+			retVal.Add(instance);
+			currentHeads.Add(instance);
+		}
+		return retVal;
 	}
 
-	/*
-	public GameObject SpawnHead(Vector3 _loc)
+	public void ClearCurrentHeads()
 	{
-		//
+		foreach (GameObject head in currentHeads)
+		{
+			Destroy(head);
+		}
 	}
-	*/
 
-	// subscribe the Activity to the element's clicks
-	public void SubscribeToOnClick(Activity _caller, GameObject _UI)
+	// subscribe the object to the element's clicks
+	public void SubscribeToOnClick(Object _caller, GameObject _UI)
 	{
+		Activity caller_activity = _caller as Activity;
+		Officer caller_officer = _caller as Officer;
+
 		Button b = _UI.GetComponent<Button>();
-		b.onClick.AddListener(() => _caller.OnPinClick());
+
+		if (caller_activity != null)
+			b.onClick.AddListener(() => caller_activity.OnPinClick());
+		else if (caller_officer != null)
+			b.onClick.AddListener(() => caller_officer.OnHeadClick());
 	}
 }

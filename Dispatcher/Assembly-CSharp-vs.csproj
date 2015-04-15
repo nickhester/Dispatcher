@@ -63,6 +63,7 @@
      <Compile Include="Assets\scripts\other\GameManager.cs" />
      <Compile Include="Assets\scripts\other\InputManager.cs" />
      <Compile Include="Assets\scripts\other\TimeOnClock.cs" />
+     <Compile Include="Assets\scripts\other\types.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
