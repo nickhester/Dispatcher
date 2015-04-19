@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Neighborhood : MonoBehaviour {
 
 	public List<Intersection> intersections;
-	private List<Building> allBuildings = new List<Building>();
+	private List<Structure> allStructures = new List<Structure>();
 	private int m_crimeLevel = 0;
 
 	void Start()
@@ -13,12 +13,12 @@ public class Neighborhood : MonoBehaviour {
 		// find all buildings (and set neighborhood)
 		foreach (Intersection intersection in intersections)
 		{
-			foreach (Building building in intersection.FindAllBuildings())
+			foreach (Structure structure in intersection.FindAllStructures())
 			{
-				if (!allBuildings.Contains(building))
+				if (!allStructures.Contains(structure))
 				{
-					building.SetNeighborhood(this);
-					allBuildings.Add(building);
+					structure.SetNeighborhood(this);
+					allStructures.Add(structure);
 				}
 			}
 		}
@@ -46,15 +46,17 @@ public class Neighborhood : MonoBehaviour {
 		// build list of all buildings from intersection, and then from path
 	}
 
-	public List<Building> GetBuildings()
+	public List<Structure> GetStructures()
 	{
-		return allBuildings;
+		return allStructures;
 	}
 
 	Building FindAvailableBuilding()
 	{
-		foreach (Building building in allBuildings)
+		foreach (Structure structure in allStructures)
 		{
+			Building building = structure as Building;
+			if (building == null) { continue; }
 			if (!building.IsCrimeOccuring())
 			{
 				return building;
@@ -79,5 +81,10 @@ public class Neighborhood : MonoBehaviour {
 		Building building = FindAvailableBuilding();
 		_crime.Activate(building);
 		building.SetCurrentCrime(_crime);
+	}
+
+	public List<Intersection> GetIntersections()
+	{
+		return intersections;
 	}
 }

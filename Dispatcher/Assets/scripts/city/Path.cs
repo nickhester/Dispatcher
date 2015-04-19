@@ -4,10 +4,22 @@ using System.Collections.Generic;
 
 public class Path : MonoBehaviour {
 
-	public List<Building> buildings = new List<Building>();
+	public List<Structure> structures = new List<Structure>();
+	private List<Intersection> intersections = new List<Intersection>();
 
-	public List<Building> GetBuildings()
+	public void Initialize(Intersection _i)
 	{
-		return buildings;
+		if (!intersections.Contains(_i))
+			intersections.Add(_i);
+	}
+
+	public List<Structure> GetStructures()
+	{
+		return structures;
+	}
+
+	public List<Intersection> GetIntersections()
+	{
+		return intersections;
 	}
 }

@@ -5,7 +5,6 @@ using System.Collections.Generic;
 public class Depot : Structure {
 
 	private List<Officer> officers = new List<Officer>();
-	public List<Intersection> connectionIntersections = new List<Intersection>();
 	private City theCity;
 	private List<Crime> listOfKnownCrimes = new List<Crime>();
 	public GameObject officerPrefab;
@@ -61,9 +60,11 @@ public class Depot : Structure {
 
 	void DetectNewCrimes()
 	{
-		List<Building> allBuildings = theCity.GetAllBuildings();
-		foreach (Building building in allBuildings)
+		List<Structure> allStructures = theCity.GetAllStructures();
+		foreach (Structure structure in allStructures)
 		{
+			Building building = structure as Building;
+			if (building == null) { continue; }
 			if (building.IsCrimeOccuring())
 			{
 				Crime c = building.GetCurrentCrime();
@@ -149,8 +150,10 @@ public class Depot : Structure {
 	public void CollectIncomeFromBuildings()
 	{
 		int total = 0;
-		foreach (Building building in theCity.GetAllBuildings())
+		foreach (Structure structure in theCity.GetAllStructures())
 		{
+			Building building = structure as Building;
+			if (building == null) { continue; }
 			if (building.GetCondition() == Building.BuildingCondition.Good)
 				total += earned_buildingGood;
 			else if (building.GetCondition() == Building.BuildingCondition.Medium)

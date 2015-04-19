@@ -1,13 +1,24 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\entities\Officer.cs">
     <Files>
-      <File FileName="Assets\scripts\entities\Officer.cs" Line="216" Column="12" />
-      <File FileName="Assets\scripts\events\Crime.cs" Line="22" Column="24" />
+      <File FileName="Assets\scripts\other\types.cs" Line="167" Column="18" />
+      <File FileName="Assets\scripts\other\Pathfinder.cs" Line="11" Column="20" />
+      <File FileName="Assets\scripts\city\City.cs" Line="5" Column="34" />
+      <File FileName="Assets\scripts\city\Intersection.cs" Line="15" Column="2" />
+      <File FileName="Assets\scripts\city\Path.cs" Line="7" Column="2" />
+      <File FileName="Assets\scripts\events\Activity.cs" Line="43" Column="3" />
+      <File FileName="Assets\scripts\entities\Officer.cs" Line="122" Column="66" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="C:\Users\Nick\Documents\GitHub\Dispatcher\Dispatcher\Assets\scripts\other\types.cs" line="111" />
+      <Breakpoint file="C:\Users\Nick\Documents\GitHub\Dispatcher\Dispatcher\Assets\scripts\other\Pathfinder.cs" line="70" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
+    <Watch file="Assets\scripts\city\Path.cs" line="12" offsetX="390" offsetY="176" expression="intersections" liveUpdate="False" />
+    <Watch file="Assets\scripts\other\Pathfinder.cs" line="52" offsetX="598" offsetY="764" expression="n" liveUpdate="False" />
+  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
 </Properties>

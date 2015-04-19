@@ -70,7 +70,7 @@ public class CrimeRing : MonoBehaviour {
 	{
 		// create a crime
 		int chooseCrime = Random.Range(0, 3);
-		int chooseTime = Random.Range(1, 6);
+		int chooseTime = Random.Range(1, 2);
 		int chooseDuration = Random.Range(10, 30);
 
 		types.CrimeType thisCrimeType = types.CrimeType.Robbery;

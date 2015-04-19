@@ -7,6 +7,30 @@ public class City : MonoBehaviour {
 	public List<Neighborhood> neighborhoods = new List<Neighborhood>();
 	public Depot depot;
 	public CrimeRing crimeRing;
+	public Pathfinder pathfinder;
+
+	void Start()
+	{
+		// build navgraph of city
+		foreach (Neighborhood neighborhood in neighborhoods)
+		{
+			foreach (Intersection intersection in neighborhood.GetIntersections())
+			{
+				intersection.Initialize(neighborhood);
+
+				foreach (Path path in intersection.GetPaths())
+				{
+					path.Initialize(intersection);
+
+					foreach (Structure structure in path.GetStructures())
+					{
+						structure.Initialize(path);
+					}
+				}
+			}
+		}
+		pathfinder = new Pathfinder();
+	}
 
 	public Neighborhood CalculateNextCrimeLocation()
 	{
@@ -41,13 +65,15 @@ public class City : MonoBehaviour {
 		return neighborhoods;
 	}
 
-	public List<Building> GetAllBuildings()
+	public List<Structure> GetAllStructures()
 	{
-		List<Building> retVal = new List<Building>();
+		List<Structure> retVal = new List<Structure>();
 		foreach (Neighborhood neighborhood in neighborhoods)
 		{
-			retVal.AddRange(neighborhood.GetBuildings());
+			retVal.AddRange(neighborhood.GetStructures());
 		}
 		return retVal;
 	}
+
+
 }

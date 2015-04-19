@@ -41,7 +41,6 @@ public class Activity : MonoBehaviour
 
 	void ShowAllOfficers()
 	{
-		print ("show");
 		List<Officer> availableOfficers = theDepot.GetAllAvailableOfficers();
 		headList = floatingUIManager.SpawnHeads(GetBuilding().transform.position, availableOfficers);
 		for (int i = 0; i < headList.Count; i++)

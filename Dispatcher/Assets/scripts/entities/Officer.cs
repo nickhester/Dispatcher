@@ -112,15 +112,14 @@ public class Officer : MonoBehaviour {
 		progressAlongTrip = 0.0f;
 		tripStart = transform.position;
 		tripEnd = _destination.gameObject.transform.position;
+
+		// just for fun, use the pathfinder
+		print ("RESULT: " + GameObject.Find("City").GetComponent<City>().pathfinder.FindPath((Structure)theDepot, _destination).ToString());
 	}
 	
 	void LeaveDepot(bool _isHeadingToCrime)
 	{
 		m_officerState = types.OfficerState.isTravelling_interruptible;
-		if (_isHeadingToCrime)
-		{
-			PathFind(currentCrime.GetBuilding());
-		}
 	}
 	
 	bool MoveTowardDestination()
