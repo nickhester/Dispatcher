@@ -62,7 +62,7 @@ public class Neighborhood : MonoBehaviour {
 				return building;
 			}
 		}
-		Debug.LogError("Nbrhd could not find Bldg w/o crime");
+		//Debug.LogError("Nbrhd could not find Bldg w/o crime");
 		return null;
 	}
 

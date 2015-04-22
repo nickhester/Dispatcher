@@ -3,8 +3,8 @@ using System.Collections;
 
 public class Structure : MonoBehaviour {
 
-	private Neighborhood m_neighborhood;
-	private Path m_path;
+	protected Neighborhood m_neighborhood;
+	protected Path m_path;
 
 	public void Initialize(Path _p)
 	{

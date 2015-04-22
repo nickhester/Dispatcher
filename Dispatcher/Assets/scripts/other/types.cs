@@ -10,7 +10,8 @@ public static class types {
 		Depot,
 		Crime,
 		Tip,
-		Raid
+		Raid,
+		Building
 	}
 
 	public enum OfficerState
@@ -30,21 +31,10 @@ public static class types {
 
 	public struct RouteNode
 	{
-		public int type;
-		public Intersection intersection;
 		public Structure structure;
-
-		public RouteNode(Intersection _intersection)
-		{
-			type = 0;
-			intersection = _intersection;
-			structure = null;
-		}
 
 		public RouteNode(Structure _structure)
 		{
-			type = 1;
-			intersection = null;
 			structure = _structure;
 		}
 
@@ -55,19 +45,7 @@ public static class types {
 
 		public GameObject GetObject()
 		{
-			if (type == 0)
-				return intersection.gameObject;
-			else if (type == 1)
-				return structure.gameObject;
-			Debug.LogError("Request to get object of bad RouteNode");
-			return null;
-		}
-
-		public bool IsSame(Intersection _i)
-		{
-			if (_i == intersection)
-				return true;
-			return false;
+			return structure.gameObject;
 		}
 
 		public bool IsSame(Structure _s)
@@ -82,78 +60,112 @@ public static class types {
 			return GetObject().name;
 		}
 	}
+}
 
-	public struct Route
+public class OfficerTask
+{
+	private Structure location;
+	private Activity activity;
+	private int type = -1;
+
+	public OfficerTask(Activity _a)
 	{
-		public List<RouteNode> nodes;
-		public float distance;
+		activity = _a;
 
-		public Route(RouteNode _r1, RouteNode _r2)
-		{
-			nodes = new List<RouteNode>();
-			nodes.Add(_r1);
-			nodes.Add(_r2);
-			distance = Vector3.Distance(_r1.GetPosition(), _r2.GetPosition());
-			Debug.DrawLine(_r1.GetPosition(), _r2.GetPosition(), Color.red, 10.0f);
-		}
+		Crime c = _a as Crime;
+		//Tip t = _a as Tip;
+		//Raid r = _a as Raid;
 
-		public Route(Route _r)	// copy constructor
+		if (c != null)
 		{
-			nodes = new List<RouteNode>();
-			nodes.AddRange(_r.nodes);
-			distance = _r.distance;
+			type = 0;
+			location = c.GetBuilding();
 		}
+	}
 
-		public void AddNode(RouteNode _r)
-		{
-			Debug.DrawLine(GetLastNode().GetObject().gameObject.transform.position, _r.GetObject().gameObject.transform.position, Color.blue, 10.0f);
-			distance += Vector3.Distance(GetLastNode().GetPosition(), _r.GetPosition());
-			nodes.Add(_r);
-		}
+	public OfficerTask(Structure _l)
+	{
+		location = _l;
 
-		public RouteNode GetLastNode()
-		{
-			return nodes[nodes.Count - 1];
-		}
+		Depot d = _l as Depot;
+		Building b = _l as Building;
 
-		public override string ToString()
+		if (d != null)
 		{
-			string retVal = "Route: ";
-			foreach (RouteNode node in nodes)
-			{
-				retVal += node.GetObject().name + ", ";
-			}
-			return retVal;
+			type = 1;
 		}
+		else if (b != null)
+		{
+			type = 2;
+		}
+	}
+
+	public int GetTaskType()
+	{
+		return type;
+	}
+
+	public Structure GetLocation()
+	{
+		return location;
+	}
+
+	public Activity GetActivity()
+	{
+		return activity;
 	}
 }
 
 public class Route
 {
 	public List<types.RouteNode> nodes;
-	public float distance;
+	public List<float> segmentLengths = new List<float>();
 	
 	public Route(types.RouteNode _r1, types.RouteNode _r2)
 	{
 		nodes = new List<types.RouteNode>();
 		nodes.Add(_r1);
 		nodes.Add(_r2);
-		distance = Vector3.Distance(_r1.GetPosition(), _r2.GetPosition());
-		Debug.DrawLine(_r1.GetPosition(), _r2.GetPosition(), Color.red, 10.0f);
+		segmentLengths.Add(Vector3.Distance(_r1.GetPosition(), _r2.GetPosition()));
+	}
+
+	public Route(types.RouteNode _r1)
+	{
+		nodes = new List<types.RouteNode>();
+		nodes.Add(_r1);
+	}
+
+	public void DrawRouteDebugLine()
+	{
+		for (int i = 0; i < nodes.Count - 1; i++)
+		{
+			Debug.DrawLine(nodes[i].GetPosition(), nodes[i + 1].GetPosition(), Color.red, 5.0f);
+		}
 	}
 	
 	public Route(Route _r)	// copy constructor
 	{
 		nodes = new List<types.RouteNode>();
 		nodes.AddRange(_r.nodes);
-		distance = _r.distance;
+		segmentLengths = new List<float>();
+		segmentLengths.AddRange(_r.segmentLengths);
 	}
 	
 	public void AddNode(types.RouteNode _r)
 	{
-		Debug.DrawLine(GetLastNode().GetObject().gameObject.transform.position, _r.GetObject().gameObject.transform.position, Color.blue, 10.0f);
-		distance += Vector3.Distance(GetLastNode().GetPosition(), _r.GetPosition());
+		float dist = Vector3.Distance(GetLastNode().GetPosition(), _r.GetPosition());
+		segmentLengths.Add(dist);
 		nodes.Add(_r);
+	}
+
+	public float GetDistance()
+	{
+		float retVal = 0.0f;
+		foreach (var dist in segmentLengths)
+		{
+			retVal += dist;
+		}
+		return retVal;
 	}
 	
 	public types.RouteNode GetLastNode()

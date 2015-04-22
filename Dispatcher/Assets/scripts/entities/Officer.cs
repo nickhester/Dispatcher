@@ -8,6 +8,7 @@ public class Officer : MonoBehaviour {
 	private List<Crime> crimesSolved = new List<Crime>();
 	private Crime currentCrime;
 	private Depot theDepot;
+	private Structure currentLocation;
 	public List<GameObject> headImages = new List<GameObject>();
 
 	private types.OfficerState m_officerState;
@@ -15,9 +16,13 @@ public class Officer : MonoBehaviour {
 	private types.DestinationType m_destinationType;
 
 	private Structure destination;
+	private Route currentRoute;
 	private float progressAlongTrip;
 	private Vector3 tripStart;
 	private Vector3 tripEnd;
+	private bool tripCanBeInterrupted = false;
+	private int lastRouteNodeReached;
+	private List<OfficerTask> taskQueue = new List<OfficerTask>();
 
 	// officer attributes
 	public float m_xp = 0.0f;
@@ -25,7 +30,7 @@ public class Officer : MonoBehaviour {
 	private Dictionary<types.CrimeType, float> m_xpFromCrimeTypes = new Dictionary<types.CrimeType, float>();
 	private int m_level = 0;
 	private float m_crimeResolvingSpeed = 5.0f;
-	private float m_speed = 0.4f;
+	private float m_speed = 2.0f;
 
 	public void Initialize(int _index, int _level)
 	{
@@ -37,11 +42,18 @@ public class Officer : MonoBehaviour {
 	{
 		//InputManager.Instance.OnClick += OnClick;
 		theDepot = GameObject.Find ("Depot").GetComponent<Depot>();
+		currentLocation = theDepot;
 		m_destinationType = types.DestinationType.Depot;
 	}
 
 	void Update()
 	{
+		// Activate next in queue if available
+		if (GetIsAvailableForAssignment())
+		{
+			StartCoroutine("DequeueTask");
+		}
+
 		if (m_officerState == types.OfficerState.isAtDepot)
 		{
 			// do nothing
@@ -87,46 +99,158 @@ public class Officer : MonoBehaviour {
 		}
 	}
 
-	public GameObject GetMyHead()
+	public void SubmitTask(OfficerTask _task)
 	{
-		return headImages[0];
+		taskQueue.Add (_task);
 	}
 
-	public void AssignCrime(Crime _crime)
+	public void SubmitTask(Crime _crime)
+	{
+		OfficerTask task = new OfficerTask((Activity)_crime);
+		SubmitTask(task);
+	}
+
+	public void SubmitTask(Structure _structure)
+	{
+		OfficerTask task = new OfficerTask(_structure);
+		SubmitTask(task);
+	}
+
+	IEnumerator DequeueTask()
+	{
+		if (taskQueue.Count < 1)
+			yield break;
+
+		OfficerTask task = taskQueue[0];
+		taskQueue.RemoveAt(0);
+
+		// check to see if officer can be interrpted, wait if not
+		if ((m_officerState == types.OfficerState.isTravelling_interruptible))
+		{
+			while (!tripCanBeInterrupted)
+			{
+				yield return null;
+			}
+		}
+		// interpret the task, then initiate
+		int type = task.GetTaskType();
+		if (type == 0)  // crime
+		{
+			AssignCrime((Crime)task.GetActivity());
+		}
+		else if (type == 1 || type == 2)  // depot or building
+		{
+			GoToLocation ((Structure)task.GetLocation());
+		}
+	}
+
+	void AssignCrime(Crime _crime)
 	{
 		currentCrime = _crime;
-		PathFind (_crime.GetBuilding());
 		m_destinationType = types.DestinationType.Crime;
+		m_officerState = types.OfficerState.isTravelling_interruptible;
 
-		if (m_officerState == types.OfficerState.isAtDepot)
+		InitiateTrip(_crime.GetBuilding());
+	}
+
+	void GoToLocation(Structure _s)
+	{
+		Depot structure_depot = _s as Depot;
+		if (structure_depot != null)
 		{
-			LeaveDepot(true);
+			m_destinationType = types.DestinationType.Depot;
 		}
 		else
-			m_officerState = types.OfficerState.isTravelling_interruptible;
+		{
+			m_destinationType = types.DestinationType.Building;
+		}
+
+		currentCrime = null;
+
+		m_officerState = types.OfficerState.isTravelling_interruptible;
+
+		InitiateTrip (_s);
+	}
+
+	void InitiateTrip(Structure _s)	// this is the final stop that actually initiates the trip
+	{
+		destination = _s;
+		PathFind (_s);
+		currentLocation = null;
 	}
 	
 	void PathFind(Structure _destination)
 	{
 		// find shortest path
 		progressAlongTrip = 0.0f;
-		tripStart = transform.position;
-		tripEnd = _destination.gameObject.transform.position;
-
-		// just for fun, use the pathfinder
-		print ("RESULT: " + GameObject.Find("City").GetComponent<City>().pathfinder.FindPath((Structure)theDepot, _destination).ToString());
+		currentRoute = GameObject.Find("City").GetComponent<City>().pathfinder.FindPath(currentLocation, _destination);
+		print ("RESULT: " + currentRoute.ToString());
+		currentRoute.DrawRouteDebugLine();
+		lastRouteNodeReached = 0;
 	}
 	
-	void LeaveDepot(bool _isHeadingToCrime)
+	void LeaveCompletedCrimeScene()
 	{
 		m_officerState = types.OfficerState.isTravelling_interruptible;
+		currentCrime = null;
+		
+		InitiateTrip((Structure)theDepot);
+	}
+	
+	void ResolveCurrentCrime()
+	{
+		// record crime as a resolved crime
+		theDepot.ReportResolvedCrime(currentCrime);
+		m_officerState = types.OfficerState.isTravelling_uninterruptible;
+
+		// adjust officer experience as necessary
+		
+		currentCrime.ResolveCrime();
+		currentCrime = null;
+
+		InitiateTrip((Structure)theDepot);
+	}
+	
+	void ArriveAtLocation(Structure _destination)
+	{
+		currentLocation = _destination;
+	}
+	
+	void CancelTripToCrime()
+	{
+		currentCrime = null;
+		m_destinationType = types.DestinationType.Depot;
+		SubmitTask((Structure)theDepot);
 	}
 	
 	bool MoveTowardDestination()
 	{
 		// move toward destination along path
-		progressAlongTrip += m_speed * Time.deltaTime;
-		transform.position = ((tripEnd - tripStart) * progressAlongTrip) + tripStart;
+		progressAlongTrip += (m_speed * Time.deltaTime) / currentRoute.GetDistance();
+		float distAlongTrip = currentRoute.GetDistance() * progressAlongTrip;
+		for (int i = 0; i < currentRoute.segmentLengths.Count; i++)
+		{
+			if (i > lastRouteNodeReached)
+			{
+				lastRouteNodeReached = i;
+				tripCanBeInterrupted = true;
+				currentLocation = (Structure)currentRoute.nodes[i].structure;
+			}
+			else
+			{
+				tripCanBeInterrupted = false;
+			}
+
+			distAlongTrip -= currentRoute.segmentLengths[i];
+			if (distAlongTrip < 0.0f)
+			{
+				Vector3 _o = currentRoute.nodes[i].GetPosition();
+				Vector3 _d = currentRoute.nodes[i + 1].GetPosition();
+				transform.position = ((_d - _o) * ((distAlongTrip + currentRoute.segmentLengths[i])/currentRoute.segmentLengths[i])) + _o;
+				break;
+			}
+		}
+
 		if (progressAlongTrip >= 1.0f)
 		{
 			return true;
@@ -134,22 +258,10 @@ public class Officer : MonoBehaviour {
 		return false;
 	}
 	
-	void CancelTripToCrime()
-	{
-		currentCrime = null;
-		PathFind ((Structure)theDepot);
-		m_destinationType = types.DestinationType.Depot;
-	}
-	
 	void EnterDepot()
 	{
 		m_officerState = types.OfficerState.isAtDepot;
-	}
-	
-	void LeaveCompletedCrimeScene()
-	{
-		m_officerState = types.OfficerState.isTravelling_uninterruptible;
-		PathFind ((Structure)theDepot);
+		ArriveAtLocation(destination);
 	}
 
 	void WorkCrime()
@@ -164,20 +276,10 @@ public class Officer : MonoBehaviour {
 		}
 	}
 	
-	void ResolveCurrentCrime()
-	{
-		// record crime as a solved crime
-		theDepot.ReportResolvedCrime(currentCrime);
-		// adjust officer experience as necessary
-		
-		currentCrime.ResolveCrime();
-		currentCrime = null;
-		LeaveCompletedCrimeScene();
-	}
-	
 	void ArriveAtCrime()
 	{
 		m_officerState = types.OfficerState.isAtCrime;
+		ArriveAtLocation(destination);
 	}
 
 	public void OnHeadClick ()
@@ -219,6 +321,13 @@ public class Officer : MonoBehaviour {
 	{
 
 	}
+	
+	public GameObject GetMyHead()
+	{
+		return headImages[0];
+	}
+
+	// =========== PUBLIC GETTERS ===========
 
 	public bool GetIsAtCrime()
 	{
@@ -244,13 +353,8 @@ public class Officer : MonoBehaviour {
 		return (m_officerState == types.OfficerState.isAtDepot);
 	}
 
-	bool GetCanBeRerouted()
-	{
-		return (m_officerState != types.OfficerState.isTravelling_uninterruptible);
-	}
-
 	public bool GetIsAvailableForAssignment()
 	{
-		return (GetIsAtDepot() || GetCanBeRerouted());
+		return (GetIsAtDepot() || m_officerState != types.OfficerState.isTravelling_uninterruptible);
 	}
 }

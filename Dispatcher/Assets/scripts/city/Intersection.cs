@@ -2,10 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Intersection : MonoBehaviour {
+public class Intersection : Structure {
 
 	public List<Path> paths = new List<Path>();
-	private Neighborhood m_neighborhood;
 
 	public void Initialize(Neighborhood _n)
 	{
@@ -25,11 +24,6 @@ public class Intersection : MonoBehaviour {
 			retVal.AddRange(path.GetStructures());
 		}
 		return retVal;
-	}
-
-	public Neighborhood GetNeighborhood()
-	{
-		return m_neighborhood;
 	}
 
 	public Intersection GetOppositeIntersection(Path _p)

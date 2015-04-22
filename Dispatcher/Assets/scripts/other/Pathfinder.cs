@@ -15,25 +15,32 @@ public class Pathfinder {
 		checkedNodes = new List<types.RouteNode>();
 		List<Route> possibleRoutes = new List<Route>();
 
-		foreach (Intersection intersection in _origin.GetPath().GetIntersections())
+		// check to see if you're starting on an intersection already
+		Intersection _originIntersection = _origin as Intersection;
+		if (_originIntersection != null)
 		{
 			types.RouteNode routeNodeStart = new types.RouteNode(_origin);
-			types.RouteNode routeNodeEnd = new types.RouteNode(intersection);
-			Route route = new Route(routeNodeStart, routeNodeEnd);
+			Route route = new Route(routeNodeStart);
 			possibleRoutes.Add(route);
+			
+			checkedNodes.Add(routeNodeStart);
+		}
+		else
+		{
+			foreach (Intersection intersection in _origin.GetPath().GetIntersections())
+			{
+				types.RouteNode routeNodeStart = new types.RouteNode(_origin);
+				types.RouteNode routeNodeEnd = new types.RouteNode(intersection);
+				Route route = new Route(routeNodeStart, routeNodeEnd);
+				possibleRoutes.Add(route);
 
-			checkedNodes.Add(routeNodeEnd);
+				checkedNodes.Add(routeNodeEnd);
+			}
 		}
 
 		int loopTimeOut = 0;
 		while (loopTimeOut < 1000)
 		{
-			MonoBehaviour.print ("NEW LOOP");
-			foreach (Route item in possibleRoutes)
-			{
-				MonoBehaviour.print(item);
-			}
-
 			// current shortest path
 			float currentShortestDistance = 0.0f;
 			int currentShortestRoute = -1;
@@ -41,14 +48,13 @@ public class Pathfinder {
 			string distanceCompare = "DIST: ";
 			for (int i = 0; i < possibleRoutes.Count; i++)
 			{
-				distanceCompare += i + " " + possibleRoutes[i] + ":" + possibleRoutes[i].distance + ", ";
-				if (currentShortestRoute == -1 || possibleRoutes[i].distance < currentShortestDistance)
+				distanceCompare += i + " " + possibleRoutes[i] + ":" + possibleRoutes[i].GetDistance() + ", ";
+				if (currentShortestRoute == -1 || possibleRoutes[i].GetDistance() < currentShortestDistance)
 				{
-					currentShortestDistance = possibleRoutes[i].distance;
+					currentShortestDistance = possibleRoutes[i].GetDistance();
 					currentShortestRoute = i;
 				}
 			}
-			MonoBehaviour.print (distanceCompare);
 
 			Route shortestRoute = possibleRoutes[currentShortestRoute];
 
@@ -56,12 +62,11 @@ public class Pathfinder {
 			types.RouteNode n = shortestRoute.GetLastNode();
 			if (shortestRoute.GetLastNode().IsSame(_destination))
 			{
-				MonoBehaviour.print ("FOUND DESTINATION!");
 				return shortestRoute;
 			}
 
 			// take the shortest route found, and check to see if it has path branches
-			List<Path> pathsFromThisIntersection = shortestRoute.GetLastNode().intersection.GetPaths();
+			List<Path> pathsFromThisIntersection = ((Intersection)shortestRoute.GetLastNode().structure).GetPaths();
 			// create a duplicate of the route for each possible path it could take
 			List<Route> routeClones = new List<Route>();
 			foreach (Path path in pathsFromThisIntersection)
@@ -74,26 +79,23 @@ public class Pathfinder {
 			// check each route option
 			for (int i = 0; i < routeClones.Count; i++)
 			{
-				MonoBehaviour.print("NEW ROUTE LOOP for: " + routeClones[i]);
-
 				// check for destination on current path
 				Path thisPath = pathsFromThisIntersection[i];
 				if (thisPath.GetStructures().Contains(_destination))
 				{
-					MonoBehaviour.print("adding destination: " + _destination + " to " + routeClones[i]);
 					routeClones[i].AddNode(new types.RouteNode(_destination));
 					possibleRoutes.Add (routeClones[i]);
 				}
 				else   // otherwise add the next intersection to the route
 				{
-					types.RouteNode newRouteNode = new types.RouteNode(routeClones[i].GetLastNode().intersection.GetOppositeIntersection(thisPath));
-					MonoBehaviour.print("checking intersection: " + newRouteNode);
+					Structure _intersection = ((Intersection)routeClones[i].GetLastNode().structure).GetOppositeIntersection(thisPath);
+					types.RouteNode newRouteNode = new types.RouteNode(_intersection);
 
 					bool foundDuplicate = false;
 					foreach (types.RouteNode node in checkedNodes)
 					{
 						// if it's an intersection that's already been found don't add the route
-						if (node.intersection == newRouteNode.intersection)
+						if (node.structure == newRouteNode.structure)
 						{
 							foundDuplicate = true;
 						}
@@ -105,16 +107,7 @@ public class Pathfinder {
 					}
 					else
 					{
-
 						checkedNodes.Add(newRouteNode);
-						string cnl = "";
-						foreach (var item in checkedNodes)
-						{
-							cnl += item;
-						}
-						MonoBehaviour.print ("checked nodes: " + cnl + ", ");
-
-						MonoBehaviour.print("adding intersection: " + newRouteNode + " to " + routeClones[i]);
 						routeClones[i].AddNode(newRouteNode);
 						possibleRoutes.Add (routeClones[i]);
 					}

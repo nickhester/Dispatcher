@@ -84,7 +84,7 @@ public class Depot : Structure {
 	void SendOfficer(Officer _officer, Crime _crime)
 	{
 		// send an existing officer out for an action
-		_officer.AssignCrime(_crime);
+		_officer.SubmitTask(_crime);
 		print ("depot sends officer (#" + _officer.officerIndex + ")");
 	}
 

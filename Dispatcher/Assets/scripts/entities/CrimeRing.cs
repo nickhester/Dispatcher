@@ -11,7 +11,6 @@ public class CrimeRing : MonoBehaviour {
 	private City theCity;
 	private int crimeIndex = 0;
 
-
 	void Start()
 	{
 		theCity = GameObject.Find("City").GetComponent<City>();
@@ -71,7 +70,7 @@ public class CrimeRing : MonoBehaviour {
 		// create a crime
 		int chooseCrime = Random.Range(0, 3);
 		int chooseTime = Random.Range(1, 2);
-		int chooseDuration = Random.Range(10, 30);
+		int chooseDuration = Random.Range(5, 10);
 
 		types.CrimeType thisCrimeType = types.CrimeType.Robbery;
 		if (chooseCrime == 1)
