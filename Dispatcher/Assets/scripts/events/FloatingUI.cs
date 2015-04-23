@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class FloatingUI : MonoBehaviour {
+public class FloatingUI : BaseUI {
 
 	public GameObject pin;
 	private float PinHeight = 1.0f;
@@ -25,13 +25,8 @@ public class FloatingUI : MonoBehaviour {
 		List<GameObject> retVal = new List<GameObject>();
 		for (int i = 0; i < _officers.Count; i++)
 		{
-			Vector3 loc = _loc;
 			GameObject instance = Instantiate(_officers[i].GetMyHead()) as GameObject;
-			loc += instance.transform.up * headHeight;
-			// determine spacing
-			float spacing = (headSpacingHorizontal * i) - ((headSpacingHorizontal * ((float)_officers.Count - 1)) / 2.0f);
-			loc += instance.transform.right * spacing;
-			instance.transform.position = loc;
+			instance.transform.position = (instance.transform.up * headHeight) + SpaceOutElements(_officers.Count, i, headSpacingHorizontal);
 			retVal.Add(instance);
 			currentHeads.Add(instance);
 		}
