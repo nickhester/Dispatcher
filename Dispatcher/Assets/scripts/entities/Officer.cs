@@ -58,6 +58,10 @@ public class Officer : MonoBehaviour {
 		{
 			// do nothing
 		}
+		else if (m_officerState == types.OfficerState.isAtBuilding)
+		{
+			// do nothing
+		}
 		else if (m_officerState == types.OfficerState.isTravelling_interruptible)
 		{
 			if (m_destinationType == types.DestinationType.Crime)
@@ -76,6 +80,13 @@ public class Officer : MonoBehaviour {
 				if (MoveTowardDestination())
 				{
 					EnterDepot();
+				}
+			}
+			else if (m_destinationType == types.DestinationType.Building)
+			{
+				if (MoveTowardDestination())
+				{
+					ArriveAtBuildingNoActivity();
 				}
 			}
 		}
@@ -166,9 +177,7 @@ public class Officer : MonoBehaviour {
 		}
 
 		currentCrime = null;
-
 		m_officerState = types.OfficerState.isTravelling_interruptible;
-
 		InitiateTrip (_s);
 	}
 
@@ -211,15 +220,11 @@ public class Officer : MonoBehaviour {
 		InitiateTrip((Structure)theDepot);
 	}
 	
-	void ArriveAtLocation(Structure _destination)
-	{
-		currentLocation = _destination;
-	}
-	
 	void CancelTripToCrime()
 	{
 		currentCrime = null;
-		m_destinationType = types.DestinationType.Depot;
+		m_destinationType = types.DestinationType.Building;
+		m_officerState = types.OfficerState.isTravelling_interruptible;
 		SubmitTask((Structure)theDepot);
 	}
 	
@@ -228,9 +233,16 @@ public class Officer : MonoBehaviour {
 		// move toward destination along path
 		progressAlongTrip += (m_speed * Time.deltaTime) / currentRoute.GetDistance();
 		float distAlongTrip = currentRoute.GetDistance() * progressAlongTrip;
+
+		bool retVal = false;
+		if (progressAlongTrip >= 1.0f)
+		{
+			retVal = true;
+		}
+
 		for (int i = 0; i < currentRoute.segmentLengths.Count; i++)
 		{
-			if (i > lastRouteNodeReached)
+			if (i > lastRouteNodeReached || retVal == true)
 			{
 				lastRouteNodeReached = i;
 				tripCanBeInterrupted = true;
@@ -251,17 +263,30 @@ public class Officer : MonoBehaviour {
 			}
 		}
 
-		if (progressAlongTrip >= 1.0f)
-		{
-			return true;
-		}
-		return false;
+		return retVal;
 	}
 	
 	void EnterDepot()
 	{
 		m_officerState = types.OfficerState.isAtDepot;
-		ArriveAtLocation(destination);
+		ArriveAtLocation();
+	}
+	
+	void ArriveAtCrime()
+	{
+		m_officerState = types.OfficerState.isAtCrime;
+		ArriveAtLocation();
+	}
+
+	void ArriveAtBuildingNoActivity()
+	{
+		m_officerState = types.OfficerState.isAtBuilding;
+		ArriveAtLocation();
+	}
+	
+	void ArriveAtLocation()
+	{
+		currentLocation = destination;
 	}
 
 	void WorkCrime()
@@ -274,12 +299,6 @@ public class Officer : MonoBehaviour {
 		{
 			ResolveCurrentCrime();
 		}
-	}
-	
-	void ArriveAtCrime()
-	{
-		m_officerState = types.OfficerState.isAtCrime;
-		ArriveAtLocation(destination);
 	}
 
 	public void OnHeadClick ()

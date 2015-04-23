@@ -11,7 +11,8 @@ public static class types {
 		Crime,
 		Tip,
 		Raid,
-		Building
+		Building,
+		None
 	}
 
 	public enum OfficerState
@@ -20,6 +21,7 @@ public static class types {
 		isTravelling_interruptible,
 		isTravelling_uninterruptible,
 		isAtCrime,
+		isAtBuilding,
 	}
 
 	public enum CrimeType
