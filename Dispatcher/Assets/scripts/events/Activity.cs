@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
-public class Activity : MonoBehaviour
+abstract public class Activity : MonoBehaviour
 {
 	protected Building building;
 	protected Neighborhood neighborhood;
@@ -11,10 +11,11 @@ public class Activity : MonoBehaviour
 	protected TimeOnClock plannedStartTime;
 	protected float duration;
 	protected float progressToDuration = 0.0f;
+	protected float speedMultiplier = 1.0f;
 	protected GameObject pin;
 	protected List<GameObject> headList = new List<GameObject>();
-	private bool isActive = false;
-	private FloatingUI floatingUIManager;
+	protected bool isActive = false;
+	protected FloatingUI floatingUIManager;
 	private Depot theDepot;
 
 	public void Start()
@@ -23,18 +24,18 @@ public class Activity : MonoBehaviour
 		theDepot = GameObject.Find ("Depot").GetComponent<Depot>();
 	}
 
-	public void Update()
+	protected void BaseUpdate()
 	{
 		if (isActive)
 		{
-			UpdateDuration(Clock.GetDeltaTime());
+			UpdateDuration(Clock.GetDeltaTime() * speedMultiplier);
 			pin.transform.GetChild(0).GetChild(0).GetComponent<Image>().fillAmount = GetNormalizedProgress();
 		}
 	}
 
 	public void OnPinClick()
 	{
-		print ("clicked " + name);
+		//print ("clicked " + name);
 		GameObject.Find ("GameManager").GetComponent<GameManager>().GetGameEvents(this);
 		ShowAllOfficers();
 	}
@@ -50,13 +51,9 @@ public class Activity : MonoBehaviour
 		}
 	}
 
-	public void Activate(Building _building)
+	public virtual void Activate(Building _building)
 	{
-		building = _building;
-		// spawn pin
-		pin = floatingUIManager.SpawnPin(GetBuilding().transform.position);
-		floatingUIManager.SubscribeToOnClick(this, pin.transform.GetChild(0).gameObject);
-		isActive = true;
+		// implemented in child class
 	}
 
 	public void Deactivate()
@@ -81,7 +78,7 @@ public class Activity : MonoBehaviour
 		return (progressToDuration < 0.0f);
 	}
 
-	float GetNormalizedProgress()
+	protected float GetNormalizedProgress()
 	{
 		return (progressToDuration / duration);
 	}

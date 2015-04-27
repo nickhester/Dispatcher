@@ -5,11 +5,15 @@ using System.Collections.Generic;
 public class CrimeRing : MonoBehaviour {
 
 	public List<Criminal> criminals = new List<Criminal>();
+	public Sprite[] criminalIcons;
+	public GameObject crime;
 	private List<Crime> pendingCrimes = new List<Crime>();
 	private List<Crime> currentCrimes = new List<Crime>();
 	private List<Crime> crimeHistory = new List<Crime>();
 	private City theCity;
 	private int crimeIndex = 0;
+	private int currentCrimeLevel = 0;
+	private int[] crimeCountLevelUp = { 5, 10, 15, 20 };	// for every n crimes, crimes are up one level
 
 	void Start()
 	{
@@ -20,7 +24,6 @@ public class CrimeRing : MonoBehaviour {
 	void Update()
 	{
 		// if no crimes are pending, plan the next one
-		//if (currentCrimes.Count == 0 && pendingCrimes.Count == 0)	// use this line for one crime at a time
 		if (pendingCrimes.Count < 1)
 		{
 			PlanNextCrime();
@@ -69,8 +72,17 @@ public class CrimeRing : MonoBehaviour {
 	{
 		// create a crime
 		int chooseCrime = Random.Range(0, 3);
-		int chooseTime = Random.Range(1, 2);
-		int chooseDuration = Random.Range(5, 10);
+		int chooseTime = Random.Range(2, 5);
+		int chooseDuration = Random.Range(5, 15);
+
+		// determine crime level
+		if (currentCrimeLevel < crimeCountLevelUp.Length)
+		{
+			if (crimeIndex == crimeCountLevelUp[currentCrimeLevel])
+			{
+				currentCrimeLevel++;
+			}
+		}
 
 		types.CrimeType thisCrimeType = types.CrimeType.Robbery;
 		if (chooseCrime == 1)
@@ -78,12 +90,12 @@ public class CrimeRing : MonoBehaviour {
 		else if (chooseCrime == 2)
 			thisCrimeType = types.CrimeType.Violence;
 
-		GameObject crime_go = new GameObject("crime " + crimeIndex);
+		GameObject crime_go = Instantiate(crime);
+		crime_go.name = "crime " + crimeIndex;
 		crime_go.transform.SetParent(gameObject.transform);
-		Crime crime = crime_go.AddComponent<Crime>() as Crime;
-		crime.Initialize(thisCrimeType, 1, new TimeOnClock(true, chooseTime), chooseDuration, crimeIndex);
+		crime_go.GetComponent<Crime>().Initialize(thisCrimeType, currentCrimeLevel, new TimeOnClock(true, chooseTime), chooseDuration, crimeIndex);
 		crimeIndex++;
-		return crime;
+		return crime_go.GetComponent<Crime>();
 	}
 	
 	void ActivateCrime(Crime _crime)

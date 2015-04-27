@@ -1,15 +1,18 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 
 public class Officer : MonoBehaviour {
 	
-	public int officerIndex;
+	public int m_index;
 	private List<Crime> crimesSolved = new List<Crime>();
 	private Crime currentCrime;
 	private Depot theDepot;
 	private Structure currentLocation;
-	public List<GameObject> headImages = new List<GameObject>();
+	public GameObject headPin;
+	public Sprite[] headImages;
+	private Sprite m_sprite;
 
 	private types.OfficerState m_officerState;
 
@@ -25,17 +28,49 @@ public class Officer : MonoBehaviour {
 	private List<OfficerTask> taskQueue = new List<OfficerTask>();
 
 	// officer attributes
-	public float m_xp = 0.0f;
-	private Dictionary<Neighborhood, float> m_xpFromNeighborhoods = new Dictionary<Neighborhood, float>();
-	private Dictionary<types.CrimeType, float> m_xpFromCrimeTypes = new Dictionary<types.CrimeType, float>();
-	private int m_level = 0;
-	private float m_crimeResolvingSpeed = 5.0f;
-	private float m_speed = 2.0f;
+	public class OfficerLevel
+	{
+		public float xp;
+		public int level;
+
+		public OfficerLevel(float _xp, int _level)
+		{
+			xp = _xp;
+			level = _level;
+		}
+	}
+	private OfficerLevel m_level;
+	private Dictionary<Neighborhood, OfficerLevel> m_level_neighborhoods = new Dictionary<Neighborhood, OfficerLevel>();
+	private Dictionary<types.CrimeType, OfficerLevel> m_level_crimeTypes = new Dictionary<types.CrimeType, OfficerLevel>();
+	private float m_baseCrimeResolvingSpeed = 2.0f;
+	private float m_baseSpeed = 2.0f;
+	private float[] levelSpeedMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
+	private float[] levelResolvingMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
+	private float[] levelResolvingMultiplier_crimeType = { 1.0f, 2.0f, 4.0f, 8.0f };
+	private float[] levelResolvingMultiplier_neighborhood = { 1.0f, 1.2f, 1.4f, 1.8f };
+	private int[] xpRequirements_level = { 4, 8, 16, 32 };
+	private int[] xpRequirements_crime = { 4, 8, 16, 32 };
+	private int[] xpRequirements_neighborhood = { 4, 8, 16, 32 };
 
 	public void Initialize(int _index, int _level)
 	{
-		officerIndex = _index;
-		m_level = _level;
+		m_index = _index;
+		if (_level != 0)
+			Debug.LogError("error: non-zero level officer created - feature not implemented");
+		m_level = new OfficerLevel(0.0f, _level);
+
+		// add all possible keys to dictionaries
+		foreach (Neighborhood neighborhood in GameObject.Find("City").GetComponent<City>().GetNeighborhoods())
+		{
+			m_level_neighborhoods.Add(neighborhood, new OfficerLevel(0.0f, 0));
+		}
+		foreach (types.CrimeType type in System.Enum.GetValues(typeof(types.CrimeType)))
+		{
+			m_level_crimeTypes.Add(type, new OfficerLevel(0.0f, 0));
+		}
+
+		// head sprite
+		m_sprite = headImages[m_index % (headImages.Length)];
 	}
 
 	void Start()
@@ -193,7 +228,7 @@ public class Officer : MonoBehaviour {
 		// find shortest path
 		progressAlongTrip = 0.0f;
 		currentRoute = GameObject.Find("City").GetComponent<City>().pathfinder.FindPath(currentLocation, _destination);
-		print ("RESULT: " + currentRoute.ToString());
+		//print ("RESULT: " + currentRoute.ToString());
 		currentRoute.DrawRouteDebugLine();
 		lastRouteNodeReached = 0;
 	}
@@ -230,8 +265,10 @@ public class Officer : MonoBehaviour {
 	
 	bool MoveTowardDestination()
 	{
+		float currentSpeed = m_baseSpeed * levelSpeedMultiplier[m_level.level];
+
 		// move toward destination along path
-		progressAlongTrip += (m_speed * Time.deltaTime) / currentRoute.GetDistance();
+		progressAlongTrip += (currentSpeed * Time.deltaTime) / currentRoute.GetDistance();
 		float distAlongTrip = currentRoute.GetDistance() * progressAlongTrip;
 
 		bool retVal = false;
@@ -291,7 +328,12 @@ public class Officer : MonoBehaviour {
 
 	void WorkCrime()
 	{
-		GetCurrentCrime().UpdateDuration(-Clock.GetDeltaTime() * m_crimeResolvingSpeed);
+		float currentSpeed = m_baseCrimeResolvingSpeed
+			* levelResolvingMultiplier[m_level.level]
+			* levelResolvingMultiplier_crimeType[m_level_crimeTypes[GetCurrentCrime().GetCrimeType()].level]
+			* levelResolvingMultiplier_neighborhood[m_level_neighborhoods[GetCurrentCrime().GetNeighborhood()].level];
+
+		GetCurrentCrime().UpdateDuration(Clock.GetDeltaTime() * -currentSpeed);
 		GainExperience(Clock.GetDeltaTime());
 
 		// if the crime is resolved
@@ -313,37 +355,95 @@ public class Officer : MonoBehaviour {
 	void GainExperience(float _experience)
 	{
 		// add experience points
-		m_xp += Clock.GetDeltaTime();
+		m_level.xp += Clock.GetDeltaTime();
 		// add experience points toward neighborhood
-		if (m_xpFromNeighborhoods.ContainsKey(GetCurrentCrime().GetNeighborhood()))
+		if (m_level_neighborhoods.ContainsKey(GetCurrentCrime().GetNeighborhood()))
 		{
-			m_xpFromNeighborhoods[GetCurrentCrime().GetNeighborhood()] += Clock.GetDeltaTime();
+			m_level_neighborhoods[GetCurrentCrime().GetNeighborhood()].xp += Clock.GetDeltaTime();
 		}
 		else
 		{
-			m_xpFromNeighborhoods.Add(GetCurrentCrime().GetNeighborhood(), Clock.GetDeltaTime());
+			m_level_neighborhoods.Add(GetCurrentCrime().GetNeighborhood(), new OfficerLevel(Clock.GetDeltaTime(), 0));
 		}
 		// add experience points toward crime type
-		if (m_xpFromCrimeTypes.ContainsKey(GetCurrentCrime().GetCrimeType()))
+		if (m_level_crimeTypes.ContainsKey(GetCurrentCrime().GetCrimeType()))
 		{
-			m_xpFromCrimeTypes[GetCurrentCrime().GetCrimeType()] += Clock.GetDeltaTime();
+			m_level_crimeTypes[GetCurrentCrime().GetCrimeType()].xp += Clock.GetDeltaTime();
 		}
 		else
 		{
-			m_xpFromCrimeTypes.Add(GetCurrentCrime().GetCrimeType(), Clock.GetDeltaTime());
+			m_level_crimeTypes.Add(GetCurrentCrime().GetCrimeType(), new OfficerLevel(Clock.GetDeltaTime(), 0));
 		}
 
-		// TODO: check if level up
+		// check if level up
+		for (int i = 0; i < xpRequirements_level.Length; i++)
+		{
+			// level up
+			if (i > m_level.level)
+			{
+				if (m_level.xp >= xpRequirements_level[i])
+				{
+					LevelUp(m_level);
+				}
+			}
+			// level up crime type
+			if (i < xpRequirements_crime.Length)
+			{
+				OfficerLevel ol = m_level_crimeTypes[GetCurrentCrime().GetCrimeType()];
+				if (i > ol.level)
+				{
+					if (ol.xp >= xpRequirements_crime[i])
+					{
+						LevelUpCrime(ol);
+					}
+				}
+			}
+			// level up neighborhood
+			if (i < xpRequirements_neighborhood.Length)
+			{
+				OfficerLevel ol = m_level_neighborhoods[GetCurrentCrime().GetNeighborhood()];
+				if (i > ol.level)
+				{
+					if (ol.xp >= xpRequirements_neighborhood[i])
+					{
+						LevelUpNeighborhood(ol);
+					}
+				}
+			}
+		}
 	}
 
-	void LevelUp()
+	void LevelUpGeneral(OfficerLevel _level)
 	{
+		_level.level++;
+	}
 
+	void LevelUp(OfficerLevel _level)
+	{
+		LevelUpGeneral(_level);
+		MonoBehaviour.print("Officer " + m_index + " levels up to level " + (_level.level + 1));
+	}
+
+	void LevelUpCrime(OfficerLevel _level)
+	{
+		LevelUpGeneral(_level);
+		MonoBehaviour.print("Officer " + m_index + " levels up a crime to level " + (_level.level + 1));
+	}
+
+	void LevelUpNeighborhood(OfficerLevel _level)
+	{
+		LevelUpGeneral(_level);
+		MonoBehaviour.print("Officer " + m_index + " levels up a neighborhood to level " + (_level.level + 1));
 	}
 	
 	public GameObject GetMyHead()
 	{
-		return headImages[0];
+		return headPin;
+	}
+
+	public Sprite GetMySprite()
+	{
+		return m_sprite;
 	}
 
 	// =========== PUBLIC GETTERS ===========

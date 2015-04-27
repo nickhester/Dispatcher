@@ -19,10 +19,13 @@ public class Depot : Structure {
 	private int earned_buildingBad = 0;
 	private int earned_resolvedCrimeCashPerLevel = 2;
 
+	public delegate void OnGenerateOfficerEvent();
+	public event OnGenerateOfficerEvent OnGenerateOfficer;
+
 	void Start()
 	{
 		theCity = GameObject.Find ("City").GetComponent<City>();
-		GenerateOfficer(2);
+		GenerateOfficer(0);
 		InputManager.Instance.OnClick += OnClick;
 	}
 
@@ -85,7 +88,7 @@ public class Depot : Structure {
 	{
 		// send an existing officer out for an action
 		_officer.SubmitTask(_crime);
-		print ("depot sends officer (#" + _officer.officerIndex + ")");
+		//print ("depot sends officer (#" + _officer.officerIndex + ")");
 	}
 
 	public void SendOfficerRequest(Officer _officer, Crime _crime)
@@ -102,6 +105,9 @@ public class Depot : Structure {
 		o_comp.Initialize(officerIndex, _level);
 		officers.Add(o_comp);
 		officerIndex++;
+
+		// send event
+		OnGenerateOfficer();
 	}
 
 	public List<Crime> GetListOfCrimes()
