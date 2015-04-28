@@ -7,6 +7,7 @@ public class FloatingUI : BaseUI {
 
 	public GameObject pin;
 	private float PinHeight = 1.0f;
+	private float PinForward = 1.0f;
 	private float headHeight = 200.0f;
 	private float headSpacingHorizontal = 200.0f;
 	public List<GameObject> currentHeads = new List<GameObject>();
@@ -15,6 +16,7 @@ public class FloatingUI : BaseUI {
 	{
 		GameObject instance = SpawnObjectWithSprite(pin, _sprite, 1);
 		_loc += instance.transform.up * PinHeight;
+		_loc += instance.transform.forward * -PinForward;
 		instance.transform.position = _loc;
 
 		return instance;

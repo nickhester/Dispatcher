@@ -12,7 +12,7 @@ public class Crime : Activity {
 
 	private types.CrimeType m_crimeType;
 	private int m_crimeLevel;
-	private float[] crimeLevelDifficultyMultiplier = { 1.0f, 1.25f, 1.5f, 1.75f, 2.0f };
+	private float[] crimeLevelSpeedMultiplier = { 1.0f, 1.25f, 1.5f, 1.75f, 2.0f };
 	private int crimeIndex;
 
 	public void Initialize(types.CrimeType _crimeType, int _crimeLevel, TimeOnClock _plannedStartTime, int _duration, int _index)
@@ -22,18 +22,23 @@ public class Crime : Activity {
 		plannedStartTime = _plannedStartTime;
 		duration = (float)_duration;
 		crimeIndex = _index;
+
+		speedMultiplier = Random.Range(0.8f, 1.2f);
 	}
 	
 	public void Update()
 	{
-		if (m_crimeLevel < crimeLevelDifficultyMultiplier.Length)
+		/*	// this was when i was just speeding up crime time by level, which would probably be too hard
+		if (m_crimeLevel < crimeLevelSpeedMultiplier.Length)
 		{
-			speedMultiplier = crimeLevelDifficultyMultiplier[m_crimeLevel];
+			speedMultiplier = crimeLevelSpeedMultiplier[m_crimeLevel];
 		}
 		else
 		{
-			speedMultiplier = crimeLevelDifficultyMultiplier[crimeLevelDifficultyMultiplier.Length - 1];
+			speedMultiplier = crimeLevelSpeedMultiplier[crimeLevelSpeedMultiplier.Length - 1];
 		}
+		*/
+
 		BaseUpdate();
 	}
 

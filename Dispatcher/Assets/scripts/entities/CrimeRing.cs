@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿#define FAST_PROGRESS
+
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -13,7 +15,16 @@ public class CrimeRing : MonoBehaviour {
 	private City theCity;
 	private int crimeIndex = 0;
 	private int currentCrimeLevel = 0;
+
+#if FAST_PROGRESS
+
 	private int[] crimeCountLevelUp = { 5, 10, 15, 20 };	// for every n crimes, crimes are up one level
+
+#else
+
+	private int[] crimeCountLevelUp = { 10, 20, 30, 40 };	// for every n crimes, crimes are up one level
+
+#endif
 
 	void Start()
 	{
@@ -70,10 +81,18 @@ public class CrimeRing : MonoBehaviour {
 
 	Crime GenerateCrime()
 	{
+
+#if FAST_PROGRESS
+		// create a crime
+		int chooseCrime = Random.Range(0, 3);
+		int chooseTime = Random.Range(1, 3);
+		int chooseDuration = Random.Range(10, 15);
+#else
 		// create a crime
 		int chooseCrime = Random.Range(0, 3);
 		int chooseTime = Random.Range(2, 5);
-		int chooseDuration = Random.Range(5, 15);
+		int chooseDuration = Random.Range(15, 30);
+#endif
 
 		// determine crime level
 		if (currentCrimeLevel < crimeCountLevelUp.Length)

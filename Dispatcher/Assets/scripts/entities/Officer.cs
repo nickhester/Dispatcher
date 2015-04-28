@@ -1,3 +1,5 @@
+#define FAST_PROGRESS
+
 using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
@@ -42,15 +44,33 @@ public class Officer : MonoBehaviour {
 	private OfficerLevel m_level;
 	private Dictionary<Neighborhood, OfficerLevel> m_level_neighborhoods = new Dictionary<Neighborhood, OfficerLevel>();
 	private Dictionary<types.CrimeType, OfficerLevel> m_level_crimeTypes = new Dictionary<types.CrimeType, OfficerLevel>();
+
+#if (FAST_PROGRESS)
+
 	private float m_baseCrimeResolvingSpeed = 2.0f;
-	private float m_baseSpeed = 2.0f;
-	private float[] levelSpeedMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
+	private float m_baseTravelingSpeed = 5.0f;
+	private float[] levelTravelingSpeedMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
 	private float[] levelResolvingMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
 	private float[] levelResolvingMultiplier_crimeType = { 1.0f, 2.0f, 4.0f, 8.0f };
 	private float[] levelResolvingMultiplier_neighborhood = { 1.0f, 1.2f, 1.4f, 1.8f };
-	private int[] xpRequirements_level = { 4, 8, 16, 32 };
-	private int[] xpRequirements_crime = { 4, 8, 16, 32 };
-	private int[] xpRequirements_neighborhood = { 4, 8, 16, 32 };
+	private int[] xpRequirements_level = { 5, 10, 15, 20 };
+	private int[] xpRequirements_crime = { 5, 10, 15, 20 };
+	private int[] xpRequirements_neighborhood = { 5, 10, 15, 20 };
+
+#else
+
+	private float m_baseCrimeResolvingSpeed = 2.0f;
+	private float m_baseTravelingSpeed = 2.0f;
+	private float[] levelTravelingSpeedMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
+	private float[] levelResolvingMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
+	private float[] levelResolvingMultiplier_crimeType = { 1.0f, 2.0f, 4.0f, 8.0f };
+	private float[] levelResolvingMultiplier_neighborhood = { 1.0f, 1.2f, 1.4f, 1.8f };
+	private int[] xpRequirements_level = { 10, 20, 40, 80 };
+	private int[] xpRequirements_crime = { 10, 20, 40, 80 };
+	private int[] xpRequirements_neighborhood = { 10, 20, 40, 80 };
+
+#endif
+
 
 	public void Initialize(int _index, int _level)
 	{
@@ -265,7 +285,7 @@ public class Officer : MonoBehaviour {
 	
 	bool MoveTowardDestination()
 	{
-		float currentSpeed = m_baseSpeed * levelSpeedMultiplier[m_level.level];
+		float currentSpeed = m_baseTravelingSpeed * levelTravelingSpeedMultiplier[m_level.level];
 
 		// move toward destination along path
 		progressAlongTrip += (currentSpeed * Time.deltaTime) / currentRoute.GetDistance();
@@ -331,7 +351,8 @@ public class Officer : MonoBehaviour {
 		float currentSpeed = m_baseCrimeResolvingSpeed
 			* levelResolvingMultiplier[m_level.level]
 			* levelResolvingMultiplier_crimeType[m_level_crimeTypes[GetCurrentCrime().GetCrimeType()].level]
-			* levelResolvingMultiplier_neighborhood[m_level_neighborhoods[GetCurrentCrime().GetNeighborhood()].level];
+			* levelResolvingMultiplier_neighborhood[m_level_neighborhoods[GetCurrentCrime().GetNeighborhood()].level]
+			* ((float)(m_level.level + 1) / (float)(GetCurrentCrime().GetCrimeLevel() + 1));
 
 		GetCurrentCrime().UpdateDuration(Clock.GetDeltaTime() * -currentSpeed);
 		GainExperience(Clock.GetDeltaTime());

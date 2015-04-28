@@ -5,10 +5,10 @@ using System.Collections.Generic;
 public class officerMenu : panelMenu {
 
 	private Depot theDepot;
-	private float headSpacingHorizontal = 75.0f;
-	private float headScale = 0.4f;
-	private float distVertical = 250.0f;
+	private float headSpacingHorizontal = 200.0f;
+	private float headScale = 1.0f;
 	private List<GameObject> heads = new List<GameObject>();
+	public GameObject OfficerProfileUI;
 
 	void Awake()
 	{
@@ -23,8 +23,8 @@ public class officerMenu : panelMenu {
 		for (int i = 0; i < theDepot.GetAllOfficers().Count; i++)
 		{
 			Officer officer = theDepot.GetAllOfficers()[i];
-			GameObject instance = SpawnObjectWithSprite(officer.GetMyHead(), officer.GetMySprite(), 0);
-			instance.transform.position = (-instance.transform.up * distVertical) + SpaceOutElements (theDepot.GetAllOfficers().Count, i, headSpacingHorizontal);
+			GameObject instance = SpawnObjectWithSprite(OfficerProfileUI, officer.GetMySprite(), 1);
+			instance.transform.position = SpaceOutElements(theDepot.GetAllOfficers().Count, i, headSpacingHorizontal);
 			instance.GetComponent<RectTransform>().localScale = new Vector3(headScale, headScale);
 			instance.transform.SetParent(transform, false);
 			heads.Add (instance);
