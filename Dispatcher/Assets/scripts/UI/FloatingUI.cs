@@ -14,7 +14,7 @@ public class FloatingUI : BaseUI {
 
 	public GameObject SpawnPin(Vector3 _loc, Sprite _sprite)
 	{
-		GameObject instance = SpawnObjectWithSprite(pin, _sprite, 1);
+		GameObject instance = SpawnObjectWithSprite(pin, _sprite, "UI_pinCrime");
 		_loc += instance.transform.up * PinHeight;
 		_loc += instance.transform.forward * -PinForward;
 		instance.transform.position = _loc;
@@ -28,7 +28,7 @@ public class FloatingUI : BaseUI {
 		List<GameObject> retVal = new List<GameObject>();
 		for (int i = 0; i < _officers.Count; i++)
 		{
-			GameObject instance = SpawnObjectWithSprite(_officers[i].GetMyHead(), _officers[i].GetMySprite(), 0);
+			GameObject instance = SpawnObjectWithSprite(_officers[i].GetMyHead(), _officers[i].GetMySprite(), "UI_headOfficer");
 			instance.transform.position = (instance.transform.up * headHeight) + SpaceOutElements(_officers.Count, i, headSpacingHorizontal);
 			retVal.Add(instance);
 			currentHeads.Add(instance);

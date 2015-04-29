@@ -46,6 +46,10 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\scripts\UI\BaseUI.cs" />
+     <Compile Include="Assets\scripts\UI\FloatingUI.cs" />
+     <Compile Include="Assets\scripts\UI\officerMenu.cs" />
+     <Compile Include="Assets\scripts\UI\panelMenu.cs" />
      <Compile Include="Assets\scripts\city\Building.cs" />
      <Compile Include="Assets\scripts\city\City.cs" />
      <Compile Include="Assets\scripts\city\Depot.cs" />
@@ -59,14 +63,10 @@
      <Compile Include="Assets\scripts\events\Activity.cs" />
      <Compile Include="Assets\scripts\events\Clock.cs" />
      <Compile Include="Assets\scripts\events\Crime.cs" />
-     <Compile Include="Assets\scripts\events\FloatingUI.cs" />
-     <Compile Include="Assets\scripts\other\BaseUI.cs" />
      <Compile Include="Assets\scripts\other\GameManager.cs" />
      <Compile Include="Assets\scripts\other\InputManager.cs" />
      <Compile Include="Assets\scripts\other\Pathfinder.cs" />
      <Compile Include="Assets\scripts\other\TimeOnClock.cs" />
-     <Compile Include="Assets\scripts\other\officerMenu.cs" />
-     <Compile Include="Assets\scripts\other\panelMenu.cs" />
      <Compile Include="Assets\scripts\other\types.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>

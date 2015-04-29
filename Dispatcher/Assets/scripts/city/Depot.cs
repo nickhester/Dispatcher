@@ -25,7 +25,11 @@ public class Depot : Structure {
 	void Start()
 	{
 		theCity = GameObject.Find ("City").GetComponent<City>();
+
+		// start game with 2 officers
+		GenerateOfficer(2);
 		GenerateOfficer(0);
+
 		InputManager.Instance.OnClick += OnClick;
 	}
 

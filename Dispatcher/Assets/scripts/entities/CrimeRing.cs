@@ -81,16 +81,14 @@ public class CrimeRing : MonoBehaviour {
 
 	Crime GenerateCrime()
 	{
+		// create a crime
+		int chooseCrime = Random.Range(0, 3);
 
 #if FAST_PROGRESS
-		// create a crime
-		int chooseCrime = Random.Range(0, 3);
-		int chooseTime = Random.Range(1, 3);
+		int chooseTime = Random.Range(2, 4);
 		int chooseDuration = Random.Range(10, 15);
 #else
-		// create a crime
-		int chooseCrime = Random.Range(0, 3);
-		int chooseTime = Random.Range(2, 5);
+		int chooseTime = Random.Range(10, 20);
 		int chooseDuration = Random.Range(15, 30);
 #endif
 

@@ -28,17 +28,6 @@ public class Crime : Activity {
 	
 	public void Update()
 	{
-		/*	// this was when i was just speeding up crime time by level, which would probably be too hard
-		if (m_crimeLevel < crimeLevelSpeedMultiplier.Length)
-		{
-			speedMultiplier = crimeLevelSpeedMultiplier[m_crimeLevel];
-		}
-		else
-		{
-			speedMultiplier = crimeLevelSpeedMultiplier[crimeLevelSpeedMultiplier.Length - 1];
-		}
-		*/
-
 		BaseUpdate();
 	}
 
@@ -53,9 +42,9 @@ public class Crime : Activity {
 		if (m_crimeType == types.CrimeType.Robbery)
 			_sprite = crime_robbery;
 		else if (m_crimeType == types.CrimeType.Violence)
-			_sprite = crime_vandalism;
-		else if (m_crimeType == types.CrimeType.Vandalism)
 			_sprite = crime_violence;
+		else if (m_crimeType == types.CrimeType.Vandalism)
+			_sprite = crime_vandalism;
 
 		building = _building;
 		// spawn pin

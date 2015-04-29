@@ -75,9 +75,14 @@ public class Officer : MonoBehaviour {
 	public void Initialize(int _index, int _level)
 	{
 		m_index = _index;
-		if (_level != 0)
-			Debug.LogError("error: non-zero level officer created - feature not implemented");
-		m_level = new OfficerLevel(0.0f, _level);
+		if (_level > 0)
+		{
+			m_level = new OfficerLevel(xpRequirements_level[_level - 1], _level);
+		}
+		else
+		{
+			m_level = new OfficerLevel(0.0f, 0);
+		}
 
 		// add all possible keys to dictionaries
 		foreach (Neighborhood neighborhood in GameObject.Find("City").GetComponent<City>().GetNeighborhoods())
@@ -496,5 +501,10 @@ public class Officer : MonoBehaviour {
 	public bool GetIsAvailableForAssignment()
 	{
 		return (GetIsAtDepot() || m_officerState != types.OfficerState.isTravelling_uninterruptible);
+	}
+
+	public int GetCrimeLevel(types.CrimeType _type)
+	{
+		return m_level_crimeTypes[_type].level;
 	}
 }

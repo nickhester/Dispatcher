@@ -27,15 +27,27 @@ public class BaseUI : MonoBehaviour {
 			b.onClick.AddListener(() => caller_officer.OnHeadClick());
 	}
 
-	protected GameObject SpawnObjectWithSprite(GameObject _obj, Sprite _sprite, int _levelsDeep)
+	protected GameObject SpawnObjectWithSprite(GameObject _obj, Sprite _sprite, string _tagName)
 	{
 		GameObject retVal = Instantiate(_obj) as GameObject;
-		if (_levelsDeep == 0)
-			retVal.GetComponent<Image>().sprite = _sprite;
-		else if (_levelsDeep == 1)
-			retVal.transform.GetChild(0).GetComponent<Image>().sprite = _sprite;
-		else if (_levelsDeep == 2)
-			retVal.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = _sprite;
+		GameObject targetObject = retVal;
+		if (targetObject.tag == _tagName)
+		{
+			targetObject = retVal;
+		}
+		else
+		{
+			foreach (Transform transform in targetObject.GetComponentsInChildren<Transform>())
+			{
+				if (transform.tag == _tagName)
+				{
+					targetObject = transform.gameObject;
+					break;
+				}
+			}
+		}
+
+		targetObject.GetComponent<Image>().sprite = _sprite;
 		return retVal;
 	}
 }
