@@ -27,6 +27,7 @@ public class officerMenu : panelMenu {
                 officersWithProfiles[i].GetCrimeLevel(types.CrimeType.Robbery),
                 officersWithProfiles[i].GetCrimeLevel(types.CrimeType.Vandalism),
                 officersWithProfiles[i].GetCrimeLevel(types.CrimeType.Violence));
+			UpdateText(profiles[i], (officersWithProfiles[i].GetOfficerLevel() + 1).ToString(), "levelNumber");
 		}
 	}
 
@@ -47,7 +48,7 @@ public class officerMenu : panelMenu {
 	            officer.GetCrimeLevel(types.CrimeType.Robbery),
 	            officer.GetCrimeLevel(types.CrimeType.Vandalism),
 	          	officer.GetCrimeLevel(types.CrimeType.Violence));
-	          	*/
+	        */
 			profiles.Add (instance);
 			officersWithProfiles.Add(officer);
 		}
@@ -64,7 +65,7 @@ public class officerMenu : panelMenu {
 
 	void UpdateBadgesFromProfile(GameObject _profile, int _robbery, int _vandalism, int _violence)
 	{
-		for (int i = 0; i < _profile.transform.childCount - 1; i++)
+		for (int i = 0; i < _profile.transform.childCount; i++)
 		{
 			GameObject child = _profile.transform.GetChild(i).gameObject;
 		

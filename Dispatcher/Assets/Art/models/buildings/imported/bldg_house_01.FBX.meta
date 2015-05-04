@@ -1,0 +1,148 @@
+fileFormatVersion: 2
+guid: aa0b1d939b9309247b639b4ce69e35bd
+timeCreated: 1430620243
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: Box001
+    100004: Object001
+    100006: Plane001
+    100008: Plane003
+    100010: Plane004
+    100012: Plane005
+    100014: Plane006
+    100016: Plane007
+    100018: groundTile_grass
+    100020: house_01_door
+    100022: house_01_mid
+    100024: house_01_roof
+    100026: house_01_window
+    100028: house_01_window2
+    100030: house_01_window3
+    100032: house_01_window4
+    400000: //RootNode
+    400002: Box001
+    400004: Object001
+    400006: Plane001
+    400008: Plane003
+    400010: Plane004
+    400012: Plane005
+    400014: Plane006
+    400016: Plane007
+    400018: groundTile_grass
+    400020: house_01_door
+    400022: house_01_mid
+    400024: house_01_roof
+    400026: house_01_window
+    400028: house_01_window2
+    400030: house_01_window3
+    400032: house_01_window4
+    2300000: Box001
+    2300002: Object001
+    2300004: Plane001
+    2300006: Plane003
+    2300008: Plane004
+    2300010: Plane005
+    2300012: Plane006
+    2300014: Plane007
+    2300016: groundTile_grass
+    2300018: house_01_door
+    2300020: house_01_mid
+    2300022: house_01_roof
+    2300024: house_01_window
+    2300026: house_01_window2
+    2300028: house_01_window3
+    2300030: house_01_window4
+    3300000: Box001
+    3300002: Object001
+    3300004: Plane001
+    3300006: Plane003
+    3300008: Plane004
+    3300010: Plane005
+    3300012: Plane006
+    3300014: Plane007
+    3300016: groundTile_grass
+    3300018: house_01_door
+    3300020: house_01_mid
+    3300022: house_01_roof
+    3300024: house_01_window
+    3300026: house_01_window2
+    3300028: house_01_window3
+    3300030: house_01_window4
+    4300000: Plane001
+    4300002: Box001
+    4300004: Plane003
+    4300006: Plane004
+    4300008: Plane005
+    4300010: Plane006
+    4300012: Plane007
+    4300014: Object001
+    4300016: groundTile_grass
+    4300018: house_01_mid
+    4300020: house_01_window3
+    4300022: house_01_door
+    4300024: house_01_window2
+    4300026: house_01_window
+    4300028: house_01_window4
+    4300030: house_01_roof
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

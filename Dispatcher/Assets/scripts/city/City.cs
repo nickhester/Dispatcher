@@ -4,13 +4,18 @@ using System.Collections.Generic;
 
 public class City : MonoBehaviour {
 
-	public List<Neighborhood> neighborhoods = new List<Neighborhood>();
+	private List<Neighborhood> neighborhoods = new List<Neighborhood>();
 	public Depot depot;
 	public CrimeRing crimeRing;
 	public Pathfinder pathfinder;
 
-	void Start()
+	void Awake()
 	{
+		foreach (GameObject neighborhood in GameObject.FindGameObjectsWithTag("Neighborhood"))
+		{
+			neighborhoods.Add(neighborhood.GetComponent<Neighborhood>());
+		}
+
 		// build navgraph of city
 		foreach (Neighborhood neighborhood in neighborhoods)
 		{

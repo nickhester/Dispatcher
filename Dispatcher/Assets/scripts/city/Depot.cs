@@ -1,3 +1,5 @@
+#define FAST_PROGRESS
+
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,7 +15,11 @@ public class Depot : Structure {
 
 	// resource stuff
 	private int m_cash = 0;
+#if FAST_PROGRESS
 	private int cost_officer = 20;
+#else
+	private int cost_officer = 50;
+#endif
 	private int earned_buildingGood = 2;
 	private int earned_buildingMedium = 1;
 	private int earned_buildingBad = 0;

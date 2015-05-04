@@ -6,8 +6,8 @@ using System.Collections.Generic;
 public class FloatingUI : BaseUI {
 
 	public GameObject pin;
-	private float PinHeight = 1.0f;
-	private float PinForward = 1.0f;
+	private float PinHeight = 20.0f;
+	private float PinForward = 10.0f;
 	private float headHeight = 200.0f;
 	private float headSpacingHorizontal = 200.0f;
 	public List<GameObject> currentHeads = new List<GameObject>();
@@ -30,6 +30,11 @@ public class FloatingUI : BaseUI {
 		{
 			GameObject instance = SpawnObjectWithSprite(_officers[i].GetMyHead(), _officers[i].GetMySprite(), "UI_headOfficer");
 			instance.transform.position = (instance.transform.up * headHeight) + SpaceOutElements(_officers.Count, i, headSpacingHorizontal);
+			// enable officer state
+			if (_officers[i].GetCurrentCrimeIsActive())
+			{
+				EnableElementWithTag(instance, "UI_officerState");
+			}
 			retVal.Add(instance);
 			currentHeads.Add(instance);
 		}

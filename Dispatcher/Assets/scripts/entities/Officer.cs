@@ -48,7 +48,7 @@ public class Officer : MonoBehaviour {
 #if (FAST_PROGRESS)
 
 	private float m_baseCrimeResolvingSpeed = 2.0f;
-	private float m_baseTravelingSpeed = 5.0f;
+	private float m_baseTravelingSpeed = 100.0f;
 	private float[] levelTravelingSpeedMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
 	private float[] levelResolvingMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
 	private float[] levelResolvingMultiplier_crimeType = { 1.0f, 2.0f, 4.0f, 8.0f };
@@ -56,18 +56,20 @@ public class Officer : MonoBehaviour {
 	private int[] xpRequirements_level = { 5, 10, 15, 20 };
 	private int[] xpRequirements_crime = { 5, 10, 15, 20 };
 	private int[] xpRequirements_neighborhood = { 5, 10, 15, 20 };
+	private float incarcerationTime = 2.0f;
 
 #else
 
-	private float m_baseCrimeResolvingSpeed = 2.0f;
-	private float m_baseTravelingSpeed = 2.0f;
-	private float[] levelTravelingSpeedMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
-	private float[] levelResolvingMultiplier = { 1.0f, 1.2f, 1.4f, 1.8f };
-	private float[] levelResolvingMultiplier_crimeType = { 1.0f, 2.0f, 4.0f, 8.0f };
-	private float[] levelResolvingMultiplier_neighborhood = { 1.0f, 1.2f, 1.4f, 1.8f };
-	private int[] xpRequirements_level = { 10, 20, 40, 80 };
-	private int[] xpRequirements_crime = { 10, 20, 40, 80 };
-	private int[] xpRequirements_neighborhood = { 10, 20, 40, 80 };
+	private float m_baseCrimeResolvingSpeed = 30.0f;
+	private float m_baseTravelingSpeed = 1.5f;
+	private float[] levelTravelingSpeedMultiplier = { 1.0f, 1.1f, 1.2f, 1.3f };
+	private float[] levelResolvingMultiplier = { 1.0f, 1.1f, 1.2f, 1.3f };
+	private float[] levelResolvingMultiplier_crimeType = { 1.0f, 1.1f, 1.2f, 1.3f };
+	private float[] levelResolvingMultiplier_neighborhood = { 1.0f, 1.1f, 1.2f, 1.3f };
+	private int[] xpRequirements_level = { 20, 40, 60, 80 };
+	private int[] xpRequirements_crime = { 30, 60, 90, 120 };
+	private int[] xpRequirements_neighborhood = { 30, 60, 90, 120 };
+	private float incarcerationTime = 5.0f;
 
 #endif
 
@@ -139,7 +141,7 @@ public class Officer : MonoBehaviour {
 			{
 				if (MoveTowardDestination())
 				{
-					EnterDepot();
+					EnterDepot(false);
 				}
 			}
 			else if (m_destinationType == types.DestinationType.Building)
@@ -154,7 +156,7 @@ public class Officer : MonoBehaviour {
 		{
 			if (MoveTowardDestination())
 			{
-				EnterDepot();
+				EnterDepot(true);
 			}
 		}
 		else if (m_officerState == types.OfficerState.isAtCrime)
@@ -328,11 +330,31 @@ public class Officer : MonoBehaviour {
 		return retVal;
 	}
 	
-	void EnterDepot()
+	void EnterDepot(bool _hasCriminal)
 	{
-		m_officerState = types.OfficerState.isAtDepot;
 		ArriveAtLocation();
+		if (_hasCriminal)
+		{
+			m_officerState = types.OfficerState.isIncarcerating;
+			StartCoroutine("Incarcerate");
+		}
+		else
+		{
+			m_officerState = types.OfficerState.isAtDepot;
+		}
 	}
+
+	IEnumerator Incarcerate()
+	{
+		while (incarcerationTime > 0.0f)
+		{
+			incarcerationTime -= Clock.GetDeltaTime();
+			yield return null;
+		}
+		print ("end");
+		m_officerState = types.OfficerState.isAtDepot;
+	}
+
 	
 	void ArriveAtCrime()
 	{
@@ -500,11 +522,21 @@ public class Officer : MonoBehaviour {
 
 	public bool GetIsAvailableForAssignment()
 	{
-		return (GetIsAtDepot() || m_officerState != types.OfficerState.isTravelling_uninterruptible);
+		bool isAvailable = true;
+		if (m_officerState == types.OfficerState.isTravelling_uninterruptible)
+			isAvailable = false;
+		else if (m_officerState == types.OfficerState.isIncarcerating)
+			isAvailable = false;
+		return isAvailable;
 	}
 
 	public int GetCrimeLevel(types.CrimeType _type)
 	{
 		return m_level_crimeTypes[_type].level;
+	}
+
+	public int GetOfficerLevel()
+	{
+		return m_level.level;
 	}
 }

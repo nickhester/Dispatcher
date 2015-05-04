@@ -37,17 +37,30 @@ abstract public class Activity : MonoBehaviour
 	{
 		//print ("clicked " + name);
 		GameObject.Find ("GameManager").GetComponent<GameManager>().GetGameEvents(this);
-		ShowAllOfficers();
+		ShowOfficers();
 	}
 
-	void ShowAllOfficers()
+	void ShowOfficers()
 	{
 		List<Officer> availableOfficers = theDepot.GetAllAvailableOfficers();
-		headList = floatingUIManager.SpawnHeads(GetBuilding().transform.position, availableOfficers);
+		List<Officer> availableOfficersToShow = new List<Officer>();
+		// check to see if an officer is already at, or headed to, that building
+		foreach (Officer officer in availableOfficers)
+		{
+			if (officer.GetCurrentCrime() != null && officer.GetCurrentCrime().GetBuilding() == GetBuilding())
+			{
+				// don't add to list
+			}
+			else
+			{
+				availableOfficersToShow.Add(officer);
+			}
+		}
+		headList = floatingUIManager.SpawnHeads(GetBuilding().transform.position, availableOfficersToShow);
 		for (int i = 0; i < headList.Count; i++)
 		{
 			headList[i].transform.SetParent(pin.transform, false);
-			floatingUIManager.SubscribeToOnClick(availableOfficers[i], headList[i].gameObject);
+			floatingUIManager.SubscribeToOnClick(availableOfficersToShow[i], headList[i].gameObject);
 		}
 	}
 

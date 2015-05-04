@@ -50,4 +50,37 @@ public class BaseUI : MonoBehaviour {
 		targetObject.GetComponent<Image>().sprite = _sprite;
 		return retVal;
 	}
+
+	protected void UpdateText(GameObject _obj, string text, string _objectName)
+	{
+		GameObject targetObject = null;
+		if (_obj.name == _objectName)
+		{
+			targetObject = _obj;
+		}
+		else
+		{
+			foreach (Transform transform in _obj.GetComponentsInChildren<Transform>())
+			{
+				if (transform.name == _objectName)
+				{
+					targetObject = transform.gameObject;
+					break;
+				}
+			}
+		}
+		targetObject.GetComponent<Text>().text = text;
+	}
+
+	protected void EnableElementWithTag(GameObject _obj, string _tag)
+	{
+		foreach (Image imageComponent in _obj.GetComponentsInChildren<Image>())
+		{
+			if (imageComponent.tag == _tag)
+			{
+				imageComponent.enabled = true;
+				break;
+			}
+		}
+	}
 }

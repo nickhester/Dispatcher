@@ -1,0 +1,183 @@
+fileFormatVersion: 2
+guid: c5c107fe1dd60944d8c923f79eab1791
+timeCreated: 1430684728
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: building_01_body
+    100004: building_01_door
+    100006: building_01_roof1
+    100008: building_01_roof2
+    100010: building_01_window01
+    100012: building_01_window02
+    100014: building_01_window03
+    100016: building_01_window04
+    100018: building_01_window05
+    100020: building_01_window06
+    100022: building_01_window07
+    100024: building_01_window08
+    100026: building_01_window09
+    100028: building_01_window10
+    100030: building_01_window11
+    100032: building_01_window12
+    100034: building_01_window13
+    100036: building_01_window14
+    100038: building_01_window15
+    100040: building_01_window16
+    100042: building_01_window17
+    100044: building_01_window18
+    100046: groundTile_grass
+    400000: //RootNode
+    400002: building_01_body
+    400004: building_01_door
+    400006: building_01_roof1
+    400008: building_01_roof2
+    400010: building_01_window01
+    400012: building_01_window02
+    400014: building_01_window03
+    400016: building_01_window04
+    400018: building_01_window05
+    400020: building_01_window06
+    400022: building_01_window07
+    400024: building_01_window08
+    400026: building_01_window09
+    400028: building_01_window10
+    400030: building_01_window11
+    400032: building_01_window12
+    400034: building_01_window13
+    400036: building_01_window14
+    400038: building_01_window15
+    400040: building_01_window16
+    400042: building_01_window17
+    400044: building_01_window18
+    400046: groundTile_grass
+    2300000: building_01_body
+    2300002: building_01_door
+    2300004: building_01_roof1
+    2300006: building_01_roof2
+    2300008: building_01_window01
+    2300010: building_01_window02
+    2300012: building_01_window03
+    2300014: building_01_window04
+    2300016: building_01_window05
+    2300018: building_01_window06
+    2300020: building_01_window07
+    2300022: building_01_window08
+    2300024: building_01_window09
+    2300026: building_01_window10
+    2300028: building_01_window11
+    2300030: building_01_window12
+    2300032: building_01_window13
+    2300034: building_01_window14
+    2300036: building_01_window15
+    2300038: building_01_window16
+    2300040: building_01_window17
+    2300042: building_01_window18
+    2300044: groundTile_grass
+    3300000: building_01_body
+    3300002: building_01_door
+    3300004: building_01_roof1
+    3300006: building_01_roof2
+    3300008: building_01_window01
+    3300010: building_01_window02
+    3300012: building_01_window03
+    3300014: building_01_window04
+    3300016: building_01_window05
+    3300018: building_01_window06
+    3300020: building_01_window07
+    3300022: building_01_window08
+    3300024: building_01_window09
+    3300026: building_01_window10
+    3300028: building_01_window11
+    3300030: building_01_window12
+    3300032: building_01_window13
+    3300034: building_01_window14
+    3300036: building_01_window15
+    3300038: building_01_window16
+    3300040: building_01_window17
+    3300042: building_01_window18
+    3300044: groundTile_grass
+    4300000: groundTile_grass
+    4300002: building_01_body
+    4300004: building_01_door
+    4300006: building_01_window05
+    4300008: building_01_window12
+    4300010: building_01_window10
+    4300012: building_01_window08
+    4300014: building_01_window06
+    4300016: building_01_window07
+    4300018: building_01_window09
+    4300020: building_01_window11
+    4300022: building_01_window13
+    4300024: building_01_window14
+    4300026: building_01_window15
+    4300028: building_01_window16
+    4300030: building_01_roof1
+    4300032: building_01_roof2
+    4300034: building_01_window17
+    4300036: building_01_window18
+    4300038: building_01_window01
+    4300040: building_01_window02
+    4300042: building_01_window03
+    4300044: building_01_window04
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

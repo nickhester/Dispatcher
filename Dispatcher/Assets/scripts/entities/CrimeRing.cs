@@ -88,9 +88,11 @@ public class CrimeRing : MonoBehaviour {
 		int chooseTime = Random.Range(2, 4);
 		int chooseDuration = Random.Range(10, 15);
 #else
-		int chooseTime = Random.Range(10, 20);
-		int chooseDuration = Random.Range(15, 30);
+		int chooseTime = Random.Range(5, 15);
+		int chooseDuration = Random.Range(25, 35);
 #endif
+		if (crimeIndex == 0)  // let the first crime start after 5 seconds
+			chooseTime = 5;
 
 		// determine crime level
 		if (currentCrimeLevel < crimeCountLevelUp.Length)

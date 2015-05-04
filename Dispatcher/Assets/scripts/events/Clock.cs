@@ -1,10 +1,16 @@
-﻿using UnityEngine;
+﻿#define FAST_PROGRESS
+
+using UnityEngine;
 using System.Collections;
 
 public static class Clock {
 
 	private static float GameTimeOffset;
+#if FAST_PROGRESS
 	private static int numSecondsInDay = 10;
+#else
+	private static int numSecondsInDay = 60;
+#endif
 	private static float accumulatedPauseTime = 0.0f;
 	private static float pauseTime = 0.0f;
 	private static bool isPaused = false;

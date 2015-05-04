@@ -53,16 +53,25 @@ public class Neighborhood : MonoBehaviour {
 
 	Building FindAvailableBuilding()
 	{
-		foreach (Structure structure in allStructures)
+		List<int> randomSearchList = new List<int>();
+		for (int i = 0; i < allStructures.Count; i++)
 		{
-			Building building = structure as Building;
+			randomSearchList.Add(Random.Range(0, allStructures.Count - 1));
+		}
+		for (int i = 0; i < allStructures.Count; i++)
+		{
+			randomSearchList.Add(i);
+		}
+		foreach (int i in randomSearchList)
+		{
+			Building building = allStructures[i] as Building;
 			if (building == null) { continue; }
 			if (!building.IsCrimeOccuring())
 			{
 				return building;
 			}
 		}
-		//Debug.LogError("Nbrhd could not find Bldg w/o crime");
+		//Debug.LogError("Neighborhood could not find Bldg w/o crime");
 		return null;
 	}
 

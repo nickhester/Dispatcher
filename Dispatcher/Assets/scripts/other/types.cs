@@ -22,6 +22,7 @@ public static class types {
 		isTravelling_uninterruptible,
 		isAtCrime,
 		isAtBuilding,
+		isIncarcerating,
 	}
 
 	public enum CrimeType
