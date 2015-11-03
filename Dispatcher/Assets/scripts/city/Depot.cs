@@ -1,4 +1,4 @@
-#define FAST_PROGRESS
+//#define FAST_PROGRESS
 
 using UnityEngine;
 using System.Collections;
@@ -16,17 +16,20 @@ public class Depot : Structure {
 	// resource stuff
 	private int m_cash = 0;
 #if FAST_PROGRESS
-	private int cost_officer = 20;
+	private int[] cost_officer = { 0, 0, 20, 30, 40, 50, 60, 70 };
+	private int earned_resolvedCrimeCashPerLevel = 10;
 #else
-	private int cost_officer = 50;
+	private int[] cost_officer = { 0, 0, 50, 100, 200, 400, 800, 1600 };
+	private int earned_resolvedCrimeCashPerLevel = 2;
 #endif
 	private int earned_buildingGood = 2;
 	private int earned_buildingMedium = 1;
 	private int earned_buildingBad = 0;
-	private int earned_resolvedCrimeCashPerLevel = 2;
 
 	public delegate void OnGenerateOfficerEvent();
 	public event OnGenerateOfficerEvent OnGenerateOfficer;
+
+	private float[] crimeDiscoveryRange = { 0.1f, 0.5f };
 
 	void Start()
 	{
@@ -50,12 +53,18 @@ public class Depot : Structure {
 		if (go == gameObject)
 		{
 			// if depot is clicked, try to buy a new officer
-			if (m_cash >= cost_officer)
+			if (m_cash >= cost_officer[officers.Count])
 			{
-				m_cash -= cost_officer;
+				m_cash -= cost_officer[officers.Count];
 				GenerateOfficer(0);
 			}
 		}
+	}
+
+	// this is the progress that the crime will have before it was reported
+	public float GetCrimeDiscoveryValue()
+	{
+		return Random.Range(crimeDiscoveryRange[0], crimeDiscoveryRange[1]);
 	}
 
 	void RemoveCompletedCrimes()
@@ -160,7 +169,7 @@ public class Depot : Structure {
 	{
 		listOfCrimesResolved.Add(_crime);
 		// add appropriate amount of cash
-		m_cash += _crime.GetCrimeLevel() * earned_resolvedCrimeCashPerLevel;
+		m_cash += (_crime.GetCrimeLevel() + 1) * earned_resolvedCrimeCashPerLevel;
 	}
 
 	public void CollectIncomeFromBuildings()

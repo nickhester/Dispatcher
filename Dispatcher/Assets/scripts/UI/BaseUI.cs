@@ -5,12 +5,24 @@ using System.Collections.Generic;
 
 public class BaseUI : MonoBehaviour {
 
-	protected Vector3 SpaceOutElements(int _numElementsTotal, int _elementIndex, float _horizontalSpacing)
+	protected Vector3 SpaceOutElements(int _numElementsTotal, int _elementIndex, float _horizontalSpacing, bool _isHorizontal)
 	{
 		Vector3 loc = Vector3.up;
 		float spacing = (_horizontalSpacing * _elementIndex) - ((_horizontalSpacing * ((float)_numElementsTotal - 1)) / 2.0f);
 		loc += Vector3.right * spacing;
+		if (!_isHorizontal)
+		{
+			float x = loc.x;
+			float y = loc.y;
+			loc.x = y;
+			loc.y = x;
+		}
 		return loc;
+	}
+
+	protected Vector3 SpaceOutElements(int _numElementsTotal, int _elementIndex, float _horizontalSpacing)
+	{
+		return SpaceOutElements(_numElementsTotal, _elementIndex, _horizontalSpacing, true);
 	}
 
 	// subscribe the object to the element's clicks

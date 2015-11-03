@@ -50,6 +50,9 @@ public class Crime : Activity {
 		// spawn pin
 		pin = floatingUIManager.SpawnPin(GetBuilding().transform.position, _sprite);
 		floatingUIManager.SubscribeToOnClick(this, pin.transform.GetChild(0).gameObject);
+
+		progressToDuration = theDepot.GetCrimeDiscoveryValue() * duration;
+
 		isActive = true;
 	}
 

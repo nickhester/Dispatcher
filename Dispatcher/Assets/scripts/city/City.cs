@@ -4,17 +4,21 @@ using System.Collections.Generic;
 
 public class City : MonoBehaviour {
 
-	private List<Neighborhood> neighborhoods = new List<Neighborhood>();
+	public List<Neighborhood> neighborhoods = new List<Neighborhood>();
+	private int neighborhoodsEnabled = 0;
 	public Depot depot;
 	public CrimeRing crimeRing;
 	public Pathfinder pathfinder;
 
 	void Awake()
 	{
+		int neighborhoodCount = 0;
 		foreach (GameObject neighborhood in GameObject.FindGameObjectsWithTag("Neighborhood"))
 		{
-			neighborhoods.Add(neighborhood.GetComponent<Neighborhood>());
+			neighborhoodCount++;
 		}
+		if (neighborhoodCount != neighborhoods.Count)
+			Debug.LogError("===CITY NOT AWARE OF ALL NEIGHBORHOODS===");
 
 		// build navgraph of city
 		foreach (Neighborhood neighborhood in neighborhoods)
@@ -35,6 +39,15 @@ public class City : MonoBehaviour {
 			}
 		}
 		pathfinder = new Pathfinder();
+
+		EnableNextNeighborhood();
+	}
+
+	public void EnableNextNeighborhood()
+	{
+		neighborhoodsEnabled++;
+		if (neighborhoods.Count > neighborhoodsEnabled)
+			neighborhoods[neighborhoodsEnabled].Activate();
 	}
 
 	public Neighborhood CalculateNextCrimeLocation()
@@ -42,11 +55,17 @@ public class City : MonoBehaviour {
 		// where will the next crime be?
 
 		// currently random; later weight by crime level
-		int randomlyChoosenNeighborhood = Random.Range(0, neighborhoods.Count);
-		if (neighborhoods[randomlyChoosenNeighborhood].CheckIfBuildingsAvailable())
+		bool hasFoundNeighborhood = false;
+		while (hasFoundNeighborhood)
 		{
-			return neighborhoods[randomlyChoosenNeighborhood];
+			int randomlyChoosenNeighborhood = Random.Range(0, neighborhoods.Count);
+			if (neighborhoods[randomlyChoosenNeighborhood].GetIsActive()
+			    && neighborhoods[randomlyChoosenNeighborhood].CheckIfBuildingsAvailable())
+			{
+				return neighborhoods[randomlyChoosenNeighborhood];
+			}
 		}
+
 
 		// if the random neighborhood has no buildings, then just find any building
 		foreach (Neighborhood neighborhood in neighborhoods)

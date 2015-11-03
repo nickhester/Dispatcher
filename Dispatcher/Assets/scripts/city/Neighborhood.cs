@@ -7,6 +7,7 @@ public class Neighborhood : MonoBehaviour {
 	public List<Intersection> intersections;
 	private List<Structure> allStructures = new List<Structure>();
 	private int m_crimeLevel = 0;
+	bool isActive = false;
 
 	void Start()
 	{
@@ -29,6 +30,16 @@ public class Neighborhood : MonoBehaviour {
 		m_crimeLevel += _change;
 		if (m_crimeLevel < 0)
 			m_crimeLevel = 0;
+	}
+
+	public void Activate()
+	{
+		isActive = true;
+	}
+
+	public bool GetIsActive()
+	{
+		return isActive;
 	}
 
 	void ShutDown()		// this neighborhood's crime has gotten so bad that it needs to be under lockdown for a little while

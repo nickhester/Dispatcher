@@ -1,4 +1,4 @@
-﻿#define FAST_PROGRESS
+﻿//#define FAST_PROGRESS
 
 using UnityEngine;
 using System.Collections;

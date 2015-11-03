@@ -1,4 +1,4 @@
-#define FAST_PROGRESS
+//#define FAST_PROGRESS
 
 using UnityEngine;
 using UnityEngine.UI;
@@ -60,13 +60,13 @@ public class Officer : MonoBehaviour {
 
 #else
 
-	private float m_baseCrimeResolvingSpeed = 30.0f;
-	private float m_baseTravelingSpeed = 1.5f;
-	private float[] levelTravelingSpeedMultiplier = { 1.0f, 1.1f, 1.2f, 1.3f };
-	private float[] levelResolvingMultiplier = { 1.0f, 1.1f, 1.2f, 1.3f };
+	private float m_baseCrimeResolvingSpeed = 2.0f;
+	private float m_baseTravelingSpeed = 20.0f;
+	private float[] levelTravelingSpeedMultiplier = { 1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f };
+	private float[] levelResolvingMultiplier = { 1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f, 1.6f };
 	private float[] levelResolvingMultiplier_crimeType = { 1.0f, 1.1f, 1.2f, 1.3f };
 	private float[] levelResolvingMultiplier_neighborhood = { 1.0f, 1.1f, 1.2f, 1.3f };
-	private int[] xpRequirements_level = { 20, 40, 60, 80 };
+	private int[] xpRequirements_level = { 10, 20, 30, 70, 120, 180 };
 	private int[] xpRequirements_crime = { 30, 60, 90, 120 };
 	private int[] xpRequirements_neighborhood = { 30, 60, 90, 120 };
 	private float incarcerationTime = 5.0f;

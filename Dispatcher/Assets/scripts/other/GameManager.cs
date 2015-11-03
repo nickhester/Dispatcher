@@ -85,8 +85,9 @@ public class GameManager : MonoBehaviour
 
 	void OnGUI()
 	{
-		GUI.Box (new Rect (10,10,100,90), "timer: " + (int)Clock.GetTotalSecondsFromStart()
+		GUI.Box (new Rect (Screen.width - 130,10,120,70), "timer: " + (int)Clock.GetTotalSecondsFromStart()
 		         + "\nday: " + Clock.GetCurrentDay()
-		         + "\ncash: " + depot.GetCash());
+		         + "\ncash: " + depot.GetCash()
+		         + "\ncrimes failed: " + crimeRing.GetNumCrimesCompleted());
 	}
 }

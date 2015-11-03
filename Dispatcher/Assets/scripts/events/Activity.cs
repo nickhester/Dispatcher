@@ -16,7 +16,7 @@ abstract public class Activity : MonoBehaviour
 	protected List<GameObject> headList = new List<GameObject>();
 	protected bool isActive = false;
 	protected FloatingUI floatingUIManager;
-	private Depot theDepot;
+	protected Depot theDepot;
 
 	public void Start()
 	{

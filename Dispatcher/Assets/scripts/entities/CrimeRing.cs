@@ -1,4 +1,4 @@
-﻿#define FAST_PROGRESS
+﻿//#define FAST_PROGRESS
 
 using UnityEngine;
 using System.Collections;
@@ -12,6 +12,7 @@ public class CrimeRing : MonoBehaviour {
 	private List<Crime> pendingCrimes = new List<Crime>();
 	private List<Crime> currentCrimes = new List<Crime>();
 	private List<Crime> crimeHistory = new List<Crime>();
+	private List<Crime> crimesCompleted = new List<Crime>();
 	private City theCity;
 	private int crimeIndex = 0;
 	private int currentCrimeLevel = 0;
@@ -22,7 +23,7 @@ public class CrimeRing : MonoBehaviour {
 
 #else
 
-	private int[] crimeCountLevelUp = { 10, 20, 30, 40 };	// for every n crimes, crimes are up one level
+	private int[] crimeCountLevelUp = { 8, 16, 24, 32, 40, 48 };	// for every n crimes, crimes are up one level
 
 #endif
 
@@ -60,6 +61,12 @@ public class CrimeRing : MonoBehaviour {
 				i--; listLen--;		// Completing the crime removes it from the list, so step the loop index back
 			}
 		}
+
+		// HACK: unlock a new neighborhood periodically
+		if (Clock.GetCurrentDay() == 10)
+		{
+			theCity.EnableNextNeighborhood();
+		}
 	}
 
 	void PlanNextCrime()
@@ -89,7 +96,7 @@ public class CrimeRing : MonoBehaviour {
 		int chooseDuration = Random.Range(10, 15);
 #else
 		int chooseTime = Random.Range(5, 15);
-		int chooseDuration = Random.Range(25, 35);
+		int chooseDuration = Random.Range(30, 45);
 #endif
 		if (crimeIndex == 0)  // let the first crime start after 5 seconds
 			chooseTime = 5;
@@ -132,6 +139,12 @@ public class CrimeRing : MonoBehaviour {
 		// remove from current list
 		currentCrimes.Remove(_crime);
 		crimeHistory.Add(_crime);
+		crimesCompleted.Add (_crime);
+	}
+
+	public int GetNumCrimesCompleted()
+	{
+		return crimesCompleted.Count;
 	}
 
 	public void ReceiveResolvedCrime(Crime _crime)

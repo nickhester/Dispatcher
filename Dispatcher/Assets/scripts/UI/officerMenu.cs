@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public class officerMenu : panelMenu {
 
 	private Depot theDepot;
-	private float headSpacingHorizontal = 200.0f;
+	private float headSpacingHorizontal = 100.0f;
 	private float headScale = 1.0f;
 	private List<GameObject> profiles = new List<GameObject>();
 	private List<Officer> officersWithProfiles = new List<Officer>();
@@ -40,7 +40,7 @@ public class officerMenu : panelMenu {
 		{
 			Officer officer = theDepot.GetAllOfficers()[i];
 			GameObject instance = SpawnObjectWithSprite(OfficerProfileUI, officer.GetMySprite(), "UI_headOfficer");
-			instance.transform.position = SpaceOutElements(theDepot.GetAllOfficers().Count, i, headSpacingHorizontal);
+			instance.transform.position = SpaceOutElements(theDepot.GetAllOfficers().Count, i, headSpacingHorizontal, false);
 			instance.GetComponent<RectTransform>().localScale = new Vector3(headScale, headScale);
 			instance.transform.SetParent(transform, false);
 			/*

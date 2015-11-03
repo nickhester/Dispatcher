@@ -78,7 +78,7 @@ public class InputManager : MonoBehaviour {
 		{
 			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 			RaycastHit hit;
-			if (Physics.Raycast (ray, out hit, 100.0f))
+			if (Physics.Raycast (ray, out hit, 1000.0f))
 			{
 				// notify of the event
 				OnClick(hit.transform.gameObject);

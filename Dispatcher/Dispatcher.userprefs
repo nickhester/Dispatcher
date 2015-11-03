@@ -1,54 +1,12 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\UI\BaseUI.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\scripts\city\Depot.cs">
     <Files>
-      <File FileName="Assets\scripts\entities\Officer.cs" Line="509" Column="2" />
-      <File FileName="Assets\scripts\events\Activity.cs" Line="126" Column="1" />
-      <File FileName="Assets\scripts\UI\BaseUI.cs" Line="77" Column="40" />
-      <File FileName="Assets\scripts\UI\FloatingUI.cs" Line="36" Column="36" />
+      <File FileName="Assets\scripts\city\Depot.cs" Line="22" Column="70" />
     </Files>
-    <Pads>
-      <Pad Id="ProjectPad">
-        <State expanded="True">
-          <Node name="Assembly-CSharp" expanded="True">
-            <Node name="scripts" expanded="True">
-              <Node name="city" expanded="True" />
-              <Node name="entities" expanded="True" />
-              <Node name="events" expanded="True" />
-              <Node name="other" expanded="True" />
-              <Node name="UI" expanded="True">
-                <Node name="BaseUI.cs" selected="True" />
-              </Node>
-            </Node>
-          </Node>
-        </State>
-      </Pad>
-      <Pad Id="ClassPad">
-        <State expanded="True" selected="True" />
-      </Pad>
-      <Pad Id="MonoDevelop.Debugger.WatchPad">
-        <State>
-          <Value>this</Value>
-          <Value>lastRouteNodeReached</Value>
-        </State>
-      </Pad>
-    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="C:\Users\Nick\Documents\GitHub\Dispatcher\Dispatcher\Assets\scripts\city\Intersection.cs" line="38" />
-      <Breakpoint file="C:\Users\Nick\Documents\GitHub\Dispatcher\Dispatcher\Assets\scripts\UI\FloatingUI.cs" line="34" />
-    </BreakpointStore>
+    <BreakpointStore />
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches>
-    <Watch file="Assets\scripts\other\Pathfinder.cs" line="52" offsetX="598" offsetY="764" expression="n" liveUpdate="False" />
-    <Watch file="Assets\scripts\UI\officerMenu.cs" line="65" offsetX="854" offsetY="944" expression="_robbery" liveUpdate="False" />
-    <Watch file="Assets\scripts\UI\officerMenu.cs" line="65" offsetX="855" offsetY="974" expression="_vandalism" liveUpdate="False" />
-    <Watch file="Assets\scripts\UI\officerMenu.cs" line="65" offsetX="856" offsetY="1010" expression="_violence" liveUpdate="False" />
-    <Watch file="Assets\scripts\UI\officerMenu.cs" line="71" offsetX="845" offsetY="1061" expression="child.name" liveUpdate="False" />
-    <Watch file="Assets\scripts\UI\officerMenu.cs" line="69" offsetX="683" offsetY="1054" expression="i" liveUpdate="False" />
-    <Watch file="Assets\scripts\city\Path.cs" line="12" offsetX="606" offsetY="160" expression="this" liveUpdate="False" />
-    <Watch file="Assets\scripts\city\City.cs" line="21" offsetX="705" offsetY="283" expression="intersection" liveUpdate="False" />
-    <Watch file="Assets\scripts\city\Path.cs" line="10" offsetX="608" offsetY="195" expression="_i" liveUpdate="False" />
-  </MonoDevelop.Ide.DebuggingService.PinnedWatches>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
 </Properties>
